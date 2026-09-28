@@ -1,15 +1,13 @@
 /* R+V Lernwelt – Persona-Datenbank
- * Statische Web-App ohne Datenbank. Die Daten liegen in data/lernwelt.json.
- * Gespeichert wird über api/speichern.ashx (falls auf dem IIS verfügbar),
- * sonst als Entwurf im Browser mit Export/Import als JSON-Datei.
+ * Web-App ohne Datenbank. Die Daten liegen in App_Data/lernwelt.json und
+ * werden nur über api/daten.ashx geladen und gespeichert (mit Passwortabfrage).
+ * In der Artifact-Vorschau sind die Daten eingebettet (Modus "vorschau").
  */
 (function () {
   'use strict';
 
   var KONFIG = {
-    datenUrl: 'data/lernwelt.json',
-    speichernUrl: 'api/speichern.ashx',
-    entwurfSchluessel: 'ruv-lernwelt-entwurf',
+    api: 'api/daten.ashx',
     themaSchluessel: 'ruv-lernwelt-thema'
   };
 
@@ -49,6 +47,8 @@
     hochladen: '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/>',
     herunterladen: '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/>',
     zuschnitt: '<path d="M6 2v14a2 2 0 0 0 2 2h14"/><path d="M18 22V8a2 2 0 0 0-2-2H2"/>',
+    abmelden: '<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/>',
+    schloss: '<rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>',
     menue: '<path d="M4 6h16M4 12h16M4 18h16"/>',
     mond: '<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>',
     sonne: '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>',
@@ -111,13 +111,10 @@
   // ------------------------------------------------------------------
   var store = {
     daten: null,
-    modus: 'lokal',          // 'server' | 'lokal'
+    modus: 'server',         // 'server' | 'vorschau' (Artifact, Daten eingebettet)
     basisRevision: 0,
-    entwurf: false,          // lokale, nicht exportierte Änderungen vorhanden
-    entwurfVeraltet: false,  // Serverdatei hat sich seit dem Entwurf geändert
-    entwurfFluechtig: false, // Browser-Speicher nicht verfügbar
-    serverMeldung: '',
-    eingebettet: false
+    anmeldungAktiv: false,
+    schreibfehler: null
   };
 
   function datenNormalisieren(d) {
@@ -136,69 +133,53 @@
     try { return JSON.parse(el.textContent); } catch (e) { return null; }
   }
 
-  function laden() {
-    var eingebettet = eingebetteteDaten();
-    var datenPromise;
-    if (eingebettet) {
-      store.eingebettet = true;
-      datenPromise = Promise.resolve(eingebettet);
-    } else {
-      datenPromise = fetch(KONFIG.datenUrl + '?t=' + Date.now(), { cache: 'no-store' }).then(function (r) {
-        if (!r.ok) throw new Error('Die Datei ' + KONFIG.datenUrl + ' konnte nicht geladen werden (HTTP ' + r.status + ').');
-        return r.json();
-      });
+  // Aufruf des Server-Teils. Liefert { status, daten }; bei 401 erscheint die Anmeldung.
+  function api(aktion, koerper, extra) {
+    var opt = { cache: 'no-store', credentials: 'same-origin', headers: { 'X-Lernwelt': '1' } };
+    if (koerper !== undefined) {
+      opt.method = 'POST';
+      opt.headers['Content-Type'] = 'application/json; charset=utf-8';
+      opt.body = JSON.stringify(koerper);
     }
-    return datenPromise.then(function (daten) {
-      store.daten = datenNormalisieren(daten);
-      store.basisRevision = store.daten.revision;
-      if (store.eingebettet) return null;
-      return fetch(KONFIG.speichernUrl + '?t=' + Date.now(), { cache: 'no-store' })
-        .then(function (r) { return r.ok ? r.json() : null; })
-        .then(function (j) {
-          if (j && j.ok) store.modus = 'server';
-          else if (j && j.meldung) store.serverMeldung = j.meldung;
-        })
-        .catch(function () { /* keine Server-Speicherung vorhanden */ });
-    }).then(function () {
-      if (store.modus !== 'lokal') { lsLoeschen(KONFIG.entwurfSchluessel); return; }
-      var roh = lsLesen(KONFIG.entwurfSchluessel);
-      if (!roh) return;
-      try {
-        var entwurf = JSON.parse(roh);
-        if (entwurf && entwurf.daten && Array.isArray(entwurf.daten.personas)) {
-          store.entwurfVeraltet = entwurf.basisRevision !== store.basisRevision;
-          store.daten = datenNormalisieren(entwurf.daten);
-          store.entwurf = true;
+    return fetch(KONFIG.api + '?aktion=' + aktion + (extra || '') + '&t=' + Date.now(), opt).then(function (r) {
+      return r.json().catch(function () { return {}; }).then(function (j) {
+        if (r.status === 401 && j.anmelden) {
+          zeigeAnmeldung('Ihre Sitzung ist abgelaufen. Bitte melden Sie sich erneut an.');
+          var e = new Error(j.meldung || 'Bitte melden Sie sich an.');
+          e.abgemeldet = true;
+          throw e;
         }
-      } catch (e) { /* defekter Entwurf wird ignoriert */ }
+        return { status: r.status, daten: j };
+      });
+    });
+  }
+
+  function serverFehler(text) {
+    return new Error(text || 'Der Server ist nicht erreichbar. Prüfen Sie, ob ASP.NET 4.x auf dem IIS aktiviert ist.');
+  }
+
+  function datenLaden() {
+    return api('laden').then(function (r) {
+      if (r.status !== 200 || !Array.isArray(r.daten.personas)) throw serverFehler(r.daten.meldung);
+      store.daten = datenNormalisieren(r.daten);
+      store.basisRevision = store.daten.revision;
     });
   }
 
   function speichern() {
     var d = store.daten;
     d.geaendertAm = new Date().toISOString();
-    if (store.modus === 'server') {
-      return fetch(KONFIG.speichernUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json; charset=utf-8' },
-        body: JSON.stringify({ erwarteteRevision: store.basisRevision, daten: d })
-      }).then(function (r) {
-        return r.json().catch(function () { return {}; }).then(function (j) {
-          if (r.status === 409) {
-            var fehler = new Error('konflikt');
-            fehler.konflikt = true;
-            throw fehler;
-          }
-          if (!r.ok || !j.ok) throw new Error(j.meldung || ('Speichern fehlgeschlagen (HTTP ' + r.status + ').'));
-          store.daten = datenNormalisieren(j.daten);
-          store.basisRevision = store.daten.revision;
-        });
-      });
-    }
-    var ok = lsSchreiben(KONFIG.entwurfSchluessel, JSON.stringify({ basisRevision: store.basisRevision, daten: d }));
-    store.entwurf = true;
-    store.entwurfFluechtig = !ok;
-    return Promise.resolve();
+    if (store.modus === 'vorschau') return Promise.resolve();
+    return api('speichern', { erwarteteRevision: store.basisRevision, daten: d }).then(function (r) {
+      if (r.status === 409) {
+        var fehler = new Error('konflikt');
+        fehler.konflikt = true;
+        throw fehler;
+      }
+      if (r.status !== 200 || !r.daten.ok) throw new Error(r.daten.meldung || ('Speichern fehlgeschlagen (HTTP ' + r.status + ').'));
+      store.daten = datenNormalisieren(r.daten.daten);
+      store.basisRevision = store.daten.revision;
+    });
   }
 
   // Führt eine Änderung aus, speichert und setzt bei Fehlern zurück.
@@ -218,12 +199,153 @@
       return ergebnis === undefined ? true : ergebnis;
     }).catch(function (e) {
       store.daten = vorher;
+      if (e.abgemeldet) return null;
       if (e.konflikt) {
         konfliktDialog();
       } else {
         toast(e.message || 'Speichern fehlgeschlagen.', true);
       }
       return null;
+    });
+  }
+
+  // Bildpfade aus den Daten ("bilder/1004.jpg") liefert der Server nur nach Anmeldung aus.
+  function bildUrl(pfad) {
+    if (!pfad) return '';
+    if (/^data:/.test(pfad) || store.modus === 'vorschau') return pfad;
+    return KONFIG.api + '?aktion=bild&name=' + encodeURIComponent(pfad.replace(/^bilder\//, ''));
+  }
+
+  // ------------------------------------------------------------------
+  // Anmeldung: Das Passwort verlässt den Browser nie (siehe krypto.js)
+  // ------------------------------------------------------------------
+  var K = window.LernweltKrypto;
+
+  function schluesselAus(passwort, saltHex, iterationen) {
+    return K.pbkdf2(K.utf8(passwort), K.hexZuBytes(saltHex), iterationen);
+  }
+  function beweis(schluessel, zweck, nonce, zusatz) {
+    return K.bytesZuHex(K.hmac(schluessel, K.utf8(zweck + ':' + nonce + ':' + (zusatz || ''))));
+  }
+  // Rechnen erst nach dem nächsten Bildaufbau, damit der Hinweis "Prüfe …" sichtbar ist
+  function spaeter(fn) {
+    return new Promise(function (resolve, reject) {
+      setTimeout(function () { try { resolve(fn()); } catch (e) { reject(e); } }, 30);
+    });
+  }
+  function challenge() {
+    return api('challenge').then(function (r) {
+      if (r.status !== 200 || !r.daten.ok) throw serverFehler(r.daten.meldung);
+      return r.daten;
+    });
+  }
+
+  function anmelden(passwort) {
+    return challenge().then(function (c) {
+      return spaeter(function () {
+        return beweis(schluesselAus(passwort, c.salt, c.iterationen), 'anmelden', c.nonce, '');
+      }).then(function (b) { return api('anmelden', { nonce: c.nonce, beweis: b }); });
+    }).then(function (r) {
+      if (r.status !== 200 || !r.daten.ok) throw new Error(r.daten.meldung || 'Anmeldung fehlgeschlagen.');
+    });
+  }
+
+  function passwortAendern(aktuell, neu) {
+    return challenge().then(function (c) {
+      return spaeter(function () {
+        var alt = schluesselAus(aktuell, c.salt, c.iterationen);
+        var neuerSchluessel = schluesselAus(neu, c.neuSalt, c.neuIterationen);
+        var maske = K.hmac(alt, K.utf8('schluessel:' + c.nonce));
+        var verschluesselt = new Uint8Array(32);
+        for (var i = 0; i < 32; i++) verschluesselt[i] = neuerSchluessel[i] ^ maske[i];
+        return { nonce: c.nonce, neuSalt: c.neuSalt, beweis: beweis(alt, 'passwort', c.nonce, c.neuSalt), neu: K.bytesZuHex(verschluesselt) };
+      }).then(function (k) { return api('passwort', k); });
+    }).then(function (r) {
+      if (r.status !== 200 || !r.daten.ok) throw new Error(r.daten.meldung || 'Das Passwort konnte nicht geändert werden.');
+    });
+  }
+
+  function abfrageSetzen(passwort, aktiv) {
+    return challenge().then(function (c) {
+      return spaeter(function () {
+        return beweis(schluesselAus(passwort, c.salt, c.iterationen), 'abfrage', c.nonce, aktiv ? '1' : '0');
+      }).then(function (b) { return api('abfrage', { nonce: c.nonce, beweis: b, aktiv: aktiv }); });
+    }).then(function (r) {
+      if (r.status !== 200 || !r.daten.ok) throw new Error(r.daten.meldung || 'Die Einstellung konnte nicht gespeichert werden.');
+      store.anmeldungAktiv = r.daten.anmeldungAktiv;
+    });
+  }
+
+  function abmelden() {
+    return api('abmelden', {}).catch(function () { return null; }).then(function () {
+      store.daten = null;
+      zeigeAnmeldung('Sie wurden abgemeldet.');
+    });
+  }
+
+  function zeigeAnmeldung(hinweis, titel) {
+    var app = document.getElementById('app');
+    app.className = 'app';
+    app.innerHTML = '<div class="anmeldung-huelle"><form class="anmeldung" id="anmelde-form" novalidate>' +
+      '<span class="nav-logo anmeldung-logo"><img src="assets/ruv-logo.png" alt="R+V"></span>' +
+      '<h1>' + esc(titel || document.title || 'R+V Lernwelt – Persona-Datenbank') + '</h1>' +
+      '<p class="anmeldung-text">Bitte geben Sie das Passwort ein.</p>' +
+      (hinweis ? '<p class="anmeldung-hinweis" role="status">' + esc(hinweis) + '</p>' : '') +
+      '<div class="feld"><label for="anm-passwort">Passwort</label><input id="anm-passwort" type="password" autocomplete="current-password" required></div>' +
+      '<p class="anmeldung-fehler" id="anm-fehler" role="alert" hidden></p>' +
+      '<button type="submit" class="knopf knopf-primaer" id="anm-knopf">Anmelden</button>' +
+      '</form></div><div class="toasts" id="toasts" aria-live="polite"></div>';
+    var feldEl = document.getElementById('anm-passwort');
+    feldEl.focus();
+    document.getElementById('anmelde-form').addEventListener('submit', function (e) {
+      e.preventDefault();
+      var knopf = document.getElementById('anm-knopf');
+      var fehler = document.getElementById('anm-fehler');
+      if (!feldEl.value) { fehler.textContent = 'Bitte geben Sie das Passwort ein.'; fehler.hidden = false; return; }
+      knopf.disabled = true;
+      knopf.textContent = 'Prüfe Passwort …';
+      fehler.hidden = true;
+      anmelden(feldEl.value).then(function () {
+        return datenLaden();
+      }).then(function () {
+        appStarten();
+      }).catch(function (err) {
+        fehler.textContent = err.message;
+        fehler.hidden = false;
+        knopf.disabled = false;
+        knopf.textContent = 'Anmelden';
+        feldEl.select();
+      });
+    });
+  }
+
+  // Dialog mit Passwortfeld; liefert das Passwort oder null
+  function passwortDialog(titel, text, okText) {
+    return new Promise(function (resolve) {
+      var huelle = document.createElement('div');
+      huelle.className = 'dialog-huelle';
+      huelle.innerHTML = '<form class="dialog" role="dialog" aria-modal="true" aria-labelledby="pdlg-titel" novalidate>' +
+        '<h3 id="pdlg-titel">' + esc(titel) + '</h3><p>' + esc(text) + '</p>' +
+        '<div class="feld"><label for="pdlg-passwort">Aktuelles Passwort</label><input id="pdlg-passwort" type="password" autocomplete="current-password"></div>' +
+        '<div class="aktionen"><button type="button" class="knopf knopf-rahmen" data-antwort="nein">Abbrechen</button>' +
+        '<button type="submit" class="knopf knopf-primaer">' + esc(okText) + '</button></div></form>';
+      function schliessen(wert) {
+        document.removeEventListener('keydown', taste);
+        huelle.remove();
+        resolve(wert);
+      }
+      function taste(e) { if (e.key === 'Escape') schliessen(null); }
+      huelle.addEventListener('click', function (e) {
+        if (e.target === huelle || e.target.closest('[data-antwort="nein"]')) schliessen(null);
+      });
+      huelle.querySelector('form').addEventListener('submit', function (e) {
+        e.preventDefault();
+        var wert = huelle.querySelector('#pdlg-passwort').value;
+        if (wert) schliessen(wert);
+      });
+      document.addEventListener('keydown', taste);
+      document.body.appendChild(huelle);
+      huelle.querySelector('#pdlg-passwort').focus();
     });
   }
 
@@ -544,6 +666,8 @@
     document.getElementById('menue-knopf').addEventListener('click', function () { app.classList.toggle('nav-offen'); });
     document.getElementById('abdunkler').addEventListener('click', function () { app.classList.remove('nav-offen'); });
 
+    if (geruest.fertig) return;
+    geruest.fertig = true;
     // Interne Links ohne Neuladen; Kopier-Knöpfe überall
     document.addEventListener('click', function (e) {
       var kopierKnopf = e.target.closest('[data-kopieren]');
@@ -555,6 +679,7 @@
       gehe(a.getAttribute('href').slice(1));
     });
     window.addEventListener('hashchange', function () {
+      if (!store.daten) return;
       ui.pfad = aktuellerPfad();
       zeichneSeite();
     });
@@ -569,9 +694,9 @@
     if (tm) tm.textContent = titel;
     var pfad = ui.pfad || '/personas';
     var status;
-    if (store.eingebettet) status = { klasse: 'lokal', text: 'Vorschau · Änderungen im Browser' };
-    else if (store.modus === 'server') status = { klasse: '', text: 'Gespeichert auf dem Server' };
-    else status = { klasse: 'lokal', text: store.entwurf ? 'Lokale Änderungen, nicht exportiert' : 'Speichern im Browser (ohne Server)' };
+    if (store.modus === 'vorschau') status = { klasse: 'lokal', text: 'Vorschau · Änderungen im Browser' };
+    else if (store.schreibfehler) status = { klasse: 'lokal', text: 'Speichern nicht möglich' };
+    else status = { klasse: '', text: 'Gespeichert auf dem Server' };
     var dunkel = effektivesThema() === 'dark';
     nav.innerHTML =
       '<div class="nav-marke"><span class="nav-logo"><img src="assets/ruv-logo.png" alt="R+V"></span>' +
@@ -583,6 +708,7 @@
       '<div class="nav-fuss">' +
       '<a class="nav-status ' + status.klasse + '" href="#/einstellungen" style="text-decoration:none"><span class="punkt"></span>' + esc(status.text) + '</a>' +
       '<button type="button" class="nav-knopf" id="thema-knopf">' + icon(dunkel ? 'sonne' : 'mond') + '<span>' + (dunkel ? 'Helles Design' : 'Dunkles Design') + '</span></button>' +
+      (store.anmeldungAktiv ? '<button type="button" class="nav-knopf" id="abmelde-knopf">' + icon('abmelden') + '<span>Abmelden</span></button>' : '') +
       '</div>';
     document.getElementById('thema-knopf').addEventListener('click', function () {
       var neu = effektivesThema() === 'dark' ? 'light' : 'dark';
@@ -590,18 +716,13 @@
       lsSchreiben(KONFIG.themaSchluessel, neu);
       zeichneNavigation();
     });
+    var abmeldeKnopf = document.getElementById('abmelde-knopf');
+    if (abmeldeKnopf) abmeldeKnopf.addEventListener('click', abmelden);
   }
 
   function hinweisBanner() {
-    if (store.eingebettet) return '';
-    if (store.modus === 'lokal' && store.entwurf) {
-      var text = store.entwurfFluechtig
-        ? 'Ihre Änderungen sind nur in diesem Browserfenster vorhanden. Exportieren Sie die Daten, bevor Sie die Seite schließen.'
-        : 'Es gibt Änderungen, die nur in diesem Browser gespeichert sind. Exportieren Sie die Daten und ersetzen Sie damit data/lernwelt.json auf dem Server.';
-      if (store.entwurfVeraltet) text += ' Achtung: Die Datei auf dem Server wurde inzwischen geändert.';
-      return '<div class="banner"><p>' + esc(text) + '</p><a class="knopf knopf-rahmen knopf-klein" href="#/einstellungen">Zum Export</a></div>';
-    }
-    return '';
+    if (!store.schreibfehler || store.modus === 'vorschau') return '';
+    return '<div class="banner"><p>' + esc(store.schreibfehler) + ' Die Einrichtung ist in der README beschrieben.</p></div>';
   }
 
   function zeichneSeite() {
@@ -644,7 +765,7 @@
 
   function avatarHtml(p, klein) {
     var inhalt = p && p.bild
-      ? '<img src="' + esc(p.bild) + '" alt="" loading="lazy">'
+      ? '<img src="' + esc(bildUrl(p.bild)) + '" alt="" loading="lazy">'
       : icon('person');
     return '<span class="avatar' + (klein ? ' avatar-klein' : '') + '">' + inhalt + '</span>';
   }
@@ -743,7 +864,7 @@
 
     var bild = p.bildGross || p.bild;
     var portrait = '<div class="portrait' + (p.bildGross ? '' : ' portrait-quadrat') + '">' +
-      (bild ? '<img src="' + esc(bild) + '" alt="' + esc(vollerName(p)) + '">' : icon('person', 'icon-gross')) + '</div>';
+      (bild ? '<img src="' + esc(bildUrl(bild)) + '" alt="' + esc(vollerName(p)) + '">' : icon('person', 'icon-gross')) + '</div>';
 
     var fakten = [];
     if (p.alter !== null && p.alter !== undefined && p.alter !== '') fakten.push('<span><strong>' + esc(p.alter) + '</strong> Jahre</span>');
@@ -955,7 +1076,7 @@
     function zeichneBild() {
       var ziel = document.getElementById('bild-bereich');
       var vorschau = zustand.bild;
-      ziel.innerHTML = '<span class="avatar" style="width:96px;height:96px">' + (vorschau ? '<img src="' + esc(vorschau) + '" alt="Vorschau">' : icon('person')) + '</span>' +
+      ziel.innerHTML = '<span class="avatar" style="width:96px;height:96px">' + (vorschau ? '<img src="' + esc(bildUrl(vorschau)) + '" alt="Vorschau">' : icon('person')) + '</span>' +
         '<div style="display:flex;flex-wrap:wrap;gap:8px">' +
         '<label class="knopf knopf-rahmen" for="pf-bilddatei">' + icon('hochladen') + (vorschau ? 'Bild ändern' : 'Bild auswählen') + '</label>' +
         '<input id="pf-bilddatei" type="file" accept="image/jpeg,image/png,image/webp" hidden>' +
@@ -980,7 +1101,7 @@
       });
       var aus = document.getElementById('pf-bild-ausschnitt');
       if (aus) aus.addEventListener('click', function () {
-        bildLaden(zustand.bildGross || zustand.bild).then(zuschnittDialog).then(function (erg) {
+        bildLaden(bildUrl(zustand.bildGross || zustand.bild)).then(zuschnittDialog).then(function (erg) {
           if (erg) { zustand.bild = erg.quadrat; zeichneBild(); }
         }).catch(function (err) { toast(err.message, true); });
       });
@@ -1423,21 +1544,37 @@
 
   function seiteEinstellungen(haupt) {
     var d = store.daten;
-    var modusText;
-    if (store.eingebettet) {
-      modusText = '<p>Dies ist eine Vorschau. Änderungen bleiben nur in diesem Browserfenster erhalten.</p>';
-    } else if (store.modus === 'server') {
-      modusText = '<p>Änderungen werden sofort in <span class="pfad" style="display:inline;padding:2px 6px">data/lernwelt.json</span> auf dem Server gespeichert. Vor jedem Speichern legt der Server eine Sicherungskopie an.</p>';
+    var vorschau = store.modus === 'vorschau';
+    var modusText = vorschau
+      ? '<p style="margin:0">Dies ist eine Vorschau. Änderungen bleiben nur in diesem Browserfenster erhalten.</p>'
+      : '<p style="margin:0">Änderungen werden sofort auf dem Server gespeichert (<span class="pfad" style="display:inline;padding:2px 6px">App_Data/lernwelt.json</span>). Vor jedem Speichern legt der Server eine Sicherungskopie an.</p>';
+    var anmeldungHtml;
+    if (vorschau) {
+      anmeldungHtml = '<p style="margin:0">Passwortabfrage und Passwortänderung stehen nur auf dem Server zur Verfügung.</p>';
     } else {
-      modusText = '<p>Die Server-Speicherung ist nicht eingerichtet' + (store.serverMeldung ? ' (' + esc(store.serverMeldung) + ')' : '') +
-        '. Änderungen werden nur in diesem Browser gehalten. Exportieren Sie die Daten und ersetzen Sie damit die Datei <span class="pfad" style="display:inline;padding:2px 6px">data/lernwelt.json</span> auf dem Server.</p>';
+      anmeldungHtml = '<div class="stapel" style="gap:16px">' +
+        '<div class="schalter-zeile"><div><strong>Passwortabfrage</strong><br><span class="klein-hinweis">' +
+        (store.anmeldungAktiv ? 'Aktiv: Die Daten sind nur nach Eingabe des Passworts sichtbar.' : 'Deaktiviert: Jede Person im Netzwerk kann die Daten sehen und ändern.') +
+        '</span></div><span class="chip' + (store.anmeldungAktiv ? '' : ' chip-warnung') + '">' + (store.anmeldungAktiv ? 'Aktiv' : 'Aus') + '</span></div>' +
+        '<div><button type="button" class="knopf knopf-rahmen" id="e-abfrage">' + icon('schloss') +
+        (store.anmeldungAktiv ? 'Passwortabfrage deaktivieren' : 'Passwortabfrage aktivieren') + '</button></div>' +
+        '<form id="e-passwort" class="stapel" style="gap:12px;border-top:1px solid var(--linie);padding-top:16px" novalidate>' +
+        '<strong>Passwort ändern</strong>' +
+        '<div class="feld"><label for="e-pw-alt">Aktuelles Passwort</label><input id="e-pw-alt" type="password" autocomplete="current-password"></div>' +
+        '<div class="feld"><label for="e-pw-neu">Neues Passwort</label><input id="e-pw-neu" type="password" autocomplete="new-password"><span class="hilfe">Mindestens 8 Zeichen.</span></div>' +
+        '<div class="feld"><label for="e-pw-neu2">Neues Passwort wiederholen</label><input id="e-pw-neu2" type="password" autocomplete="new-password"></div>' +
+        '<p class="anmeldung-fehler" id="e-pw-fehler" role="alert" hidden></p>' +
+        '<div><button type="submit" class="knopf knopf-primaer" id="e-pw-knopf">' + icon('speichern') + 'Passwort ändern</button></div></form>' +
+        '<p class="klein-hinweis">Das Passwort wird nie über das Netzwerk geschickt, auch ohne HTTPS. Nach einer Änderung werden alle anderen Anmeldungen beendet.</p>' +
+        '</div>';
     }
     haupt.innerHTML = hinweisBanner() +
-      '<div class="seitenkopf"><div><h1>Einstellungen</h1><p>Anwendungstitel und Datenhaltung</p></div></div>' +
+      '<div class="seitenkopf"><div><h1>Einstellungen</h1><p>Anwendungstitel, Anmeldung und Datenhaltung</p></div></div>' +
       '<div class="raster-karten">' +
       karte('Anwendung', 'einstellungen', '<form id="e-form" class="stapel" style="gap:16px" novalidate>' +
         eingabe('e-titel', 'Titel der Anwendung', d.einstellungen.appTitel) +
         '<div><button type="submit" class="knopf knopf-primaer">' + icon('speichern') + 'Titel speichern</button></div></form>') +
+      karte('Anmeldung & Passwort', 'schloss', anmeldungHtml) +
       karte('Datenhaltung', 'datenbank', '<div class="stapel" style="gap:16px">' + modusText +
         '<dl class="felder">' + feld('Personas / Firmen / Formate', d.personas.length + ' / ' + d.firmen.length + ' / ' + d.formate.length) +
         feld('Zuletzt gespeichert', datumText(d.geaendertAm)) + feld('Revision', store.basisRevision) + '</dl>' +
@@ -1445,12 +1582,43 @@
         '<button type="button" class="knopf knopf-primaer" id="e-export">' + icon('herunterladen') + 'Daten exportieren</button>' +
         '<label class="knopf knopf-rahmen" for="e-import">' + icon('hochladen') + 'Daten importieren</label>' +
         '<input id="e-import" type="file" accept="application/json,.json" hidden>' +
-        (store.modus === 'lokal' && store.entwurf && !store.eingebettet ? '<button type="button" class="knopf knopf-gefahr" id="e-verwerfen">' + icon('x') + 'Lokale Änderungen verwerfen</button>' : '') +
         '</div>' +
-        '<p class="klein-hinweis">Der Export enthält alle Texte und neu hochgeladene Bilder. Bilder aus der Access-Übernahme liegen als Dateien im Ordner <span class="pfad" style="display:inline;padding:2px 6px">bilder/</span>.</p>' +
+        '<p class="klein-hinweis">Der Export ist eine Sicherung aller Texte. Die Profilbilder liegen auf dem Server im Ordner <span class="pfad" style="display:inline;padding:2px 6px">App_Data/bilder</span>.</p>' +
         '</div>') +
-      karte('Anmeldung', 'person', '<p style="margin:0">Die Anwendung hat keine eigene Passwortabfrage. Den Zugriff regeln Sie im IIS, zum Beispiel über die Windows-Authentifizierung. So melden sich Mitarbeitende mit ihrem Windows-Konto an. Die Anleitung steht in der README-Datei.</p>') +
       '</div>';
+
+    var abfrageKnopf = document.getElementById('e-abfrage');
+    if (abfrageKnopf) abfrageKnopf.addEventListener('click', function () {
+      var ziel = !store.anmeldungAktiv;
+      passwortDialog(ziel ? 'Passwortabfrage aktivieren' : 'Passwortabfrage deaktivieren',
+        ziel ? 'Danach ist die Anwendung nur noch mit Passwort erreichbar.' : 'Danach kann jede Person im Netzwerk die Daten ohne Passwort sehen und ändern.',
+        ziel ? 'Aktivieren' : 'Deaktivieren').then(function (pw) {
+        if (!pw) return;
+        abfrageSetzen(pw, ziel).then(function () {
+          toast(ziel ? 'Passwortabfrage aktiviert' : 'Passwortabfrage deaktiviert');
+          zeichneSeite();
+        }).catch(function (e) { if (!e.abgemeldet) toast(e.message, true); });
+      });
+    });
+    var pwForm = document.getElementById('e-passwort');
+    if (pwForm) pwForm.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var fehler = document.getElementById('e-pw-fehler');
+      var knopf = document.getElementById('e-pw-knopf');
+      var alt = wert('e-pw-alt'), neu = wert('e-pw-neu'), neu2 = wert('e-pw-neu2');
+      function zeigeFehler(text) { fehler.textContent = text; fehler.hidden = false; }
+      fehler.hidden = true;
+      if (!alt) return zeigeFehler('Bitte geben Sie das aktuelle Passwort ein.');
+      if (neu.length < 8) return zeigeFehler('Das neue Passwort muss mindestens 8 Zeichen lang sein.');
+      if (neu !== neu2) return zeigeFehler('Die beiden neuen Passwörter stimmen nicht überein.');
+      knopf.disabled = true;
+      passwortAendern(alt, neu).then(function () {
+        pwForm.reset();
+        toast('Passwort geändert');
+      }).catch(function (err) {
+        if (!err.abgemeldet) zeigeFehler(err.message);
+      }).then(function () { knopf.disabled = false; });
+    });
 
     document.getElementById('e-form').addEventListener('submit', function (e) {
       e.preventDefault();
@@ -1488,30 +1656,42 @@
       };
       leser.readAsText(datei, 'utf-8');
     });
-    var verwerfen = document.getElementById('e-verwerfen');
-    if (verwerfen) verwerfen.addEventListener('click', function () {
-      dialog({ titel: 'Lokale Änderungen verwerfen?', text: 'Alle Änderungen, die nur in diesem Browser gespeichert sind, gehen verloren. Danach wird die Datei vom Server neu geladen.', ok: 'Verwerfen' })
-        .then(function (ja) {
-          if (!ja) return;
-          lsLoeschen(KONFIG.entwurfSchluessel);
-          window.location.reload();
-        });
-    });
   }
 
   // ------------------------------------------------------------------
   // Start
   // ------------------------------------------------------------------
+  function fehlerSeite(text) {
+    document.getElementById('app').innerHTML = '<div class="haupt" style="margin-left:0"><div class="banner"><p><strong>Die Anwendung konnte nicht gestartet werden.</strong> ' +
+      esc(text) + '</p></div></div>';
+  }
+
+  function appStarten() {
+    geruest();
+    ui.pfad = aktuellerPfad();
+    zeichneSeite();
+  }
+
   function start() {
     var thema = lsLesen(KONFIG.themaSchluessel);
     if (thema === 'dark' || thema === 'light') document.documentElement.setAttribute('data-theme', thema);
-    laden().then(function () {
-      geruest();
-      ui.pfad = aktuellerPfad();
-      zeichneSeite();
+    var eingebettet = eingebetteteDaten();
+    if (eingebettet) {
+      store.modus = 'vorschau';
+      store.daten = datenNormalisieren(eingebettet);
+      store.basisRevision = store.daten.revision;
+      return appStarten();
+    }
+    api('status').then(function (r) {
+      if (r.status !== 200 || !r.daten.ok) throw serverFehler(r.daten.meldung);
+      store.anmeldungAktiv = !!r.daten.anmeldungAktiv;
+      store.schreibfehler = r.daten.schreibfehler || null;
+      if (r.daten.appTitel) document.title = r.daten.appTitel;
+      if (!r.daten.angemeldet) return zeigeAnmeldung(null, r.daten.appTitel);
+      return datenLaden().then(appStarten);
     }).catch(function (e) {
-      document.getElementById('app').innerHTML = '<div class="haupt" style="margin-left:0"><div class="banner"><p><strong>Die Daten konnten nicht geladen werden.</strong> ' +
-        esc(e.message) + ' Prüfen Sie, ob die Datei data/lernwelt.json vorhanden ist und der IIS JSON-Dateien ausliefert (siehe web.config).</p></div></div>';
+      if (e.abgemeldet) return;
+      fehlerSeite(e instanceof SyntaxError || e instanceof TypeError ? serverFehler().message : e.message);
     });
   }
 

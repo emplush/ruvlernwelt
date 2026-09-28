@@ -1,7 +1,7 @@
 {
  "schema": 1,
  "revision": 1,
- "geaendertAm": "2026-09-28T18:20:25+00:00",
+ "geaendertAm": "2026-09-28T18:39:48+00:00",
  "einstellungen": {
   "appTitel": "R+V Lernwelt – Persona-Datenbank"
  },
@@ -26,7 +26,7 @@
    "beruf": "Rentner",
    "familienstand": "verheiratet",
    "wohnart": "EFH (Eigentum)",
-   "verwandt": null,
+   "verwandt": "Heidrun Düring - Ehefrau\nJasper Düring - Sohn",
    "lebenslauf": "Abitur mit 18\nStudium der Brauerei- & Getränketechnologie in Berlin (5 Jahre)\nnach dem Studium im Ausland gearbeitet\nletzter Job vor der Rente: Technischer Direktor einer international tätigen Brauerei",
    "aktivitaeten": "Tageszeitung lesen\nGartenpflege\nZeit mit der Familie verbringen\nReisen",
    "charakter": "weltoffen\nausgeglichen\nvielseitig interessiert",
@@ -57,7 +57,7 @@
    "beruf": "Rentnerin",
    "familienstand": "verheiratet",
    "wohnart": "EFH (Eigentum)",
-   "verwandt": null,
+   "verwandt": "Ottmar Düring - Ehemann\nJasper Düring - Sohn",
    "lebenslauf": "Abitur mit 19\n3-jährige Ausbildung zur Fremdsprachenkorrespondentin\nmehrere Jahre im Ausland verbracht",
    "aktivitaeten": "Lesen (Illustrierte & Tageszeitung)\nGartenpflege\nZeit mit der Familie verbringen",
    "charakter": "gesellig\nunternehmungslustig",
@@ -88,7 +88,7 @@
    "beruf": "Trockenbauer",
    "familienstand": "ledig / Single",
    "wohnart": "Wohngemeinschaft",
-   "verwandt": null,
+   "verwandt": "Heidrun Düring - Mutter\nOttmar Düring - Vater\nAnna Seidel - Partnerin",
    "lebenslauf": "Mittlere Reife\nAusbildung zum Trockenbauer\nArbeitet als Trockenbauer bei Mazurbau",
    "aktivitaeten": "Party machen (Disco)\nBodybuilding\nFreunde treffen",
    "charakter": "unternehmungslustig\nweltoffen\nkontaktfreudig",
@@ -150,7 +150,7 @@
    "beruf": "Junior App-Entwicklerin",
    "familienstand": "ledig / in Beziehung",
    "wohnart": "Mietwohnung",
-   "verwandt": "Claudio Mariani - Vater\nLana - Partnerin",
+   "verwandt": "Pietro Mariani - Vater\nIda Larsson - Mutter\nLana - Partnerin",
    "lebenslauf": "Ihre Eltern wanderten nach Schweden aus.\nSie ist in Deutschland geboren.\nStudierte Medieninformatik in Wiesbaden.",
    "aktivitaeten": "Video- & Computerspiele\neigener YouTube- und Twitch-Kanal, Bouldern\nEssen, Feiern & Tanzen mit Freunden",
    "charakter": "extrovertiert\nhumorvoll\nexperimentierfreudig\ngroßzügig\nverspielt\nrisikobereit",
@@ -181,7 +181,7 @@
    "beruf": "Physiotherapeutin (selbstständig)",
    "familienstand": "verheiratet",
    "wohnart": "EFH (Eigentum)",
-   "verwandt": "Hugo Neumann - Sohn",
+   "verwandt": "Jörg Neumann - Ehemann\nRegina Neumann - Schwiegermutter\nHugo Neumann - Sohn",
    "lebenslauf": "kommt aus Almeria (Spanien)\naufgewachsen & Schullaufbahn (Abitur) in Spanien\nreiste in den 20ern durch Europa & lernte ihren Ehemann in Frankreich kennen\nsie wanderte nach Deutschland aus\nführt ihre Physiotherapiepraxis von zu Hause",
    "aktivitaeten": "Gartenarbeit\nBacken\nReisen\nehrenamtliche Tätigkeit - die Tafeln",
    "charakter": "freundlich\nweltoffen\nFamilienmensch\nreiselustig\nkontaktfreudig\nhilfsbereit",
@@ -212,7 +212,7 @@
    "beruf": "Pensionärin",
    "familienstand": "geschieden",
    "wohnart": "Eigentumswohnung",
-   "verwandt": "Hugo Neumann - Enkelsohn",
+   "verwandt": "Jörg Neumann - Sohn\nCarmen Martinez-Neumann - Schwiegertochter\nHugo Neumann - Enkelsohn",
    "lebenslauf": "kommt ursprünglich aus Schleswig-Holstein\nStudium auf Lehramt\nLehrerin\nSchulleitung (Kiel)\nstellvertretende Schulleitung (Mainz)\nmit 63 in Pension",
    "aktivitaeten": "Bildungsreisen\nSingen im Gesangsverein\nEhrenamt Tierschutzverein",
    "charakter": "kontaktfreudig\nherzlich\nhilfsbereit\nkritikfähig\nzuverlässig\nausgeglichen\nintellektuell\nvielseitig\nvoller Lebensfreude",
@@ -243,7 +243,7 @@
    "beruf": "Verwaltungsfachangestellter",
    "familienstand": "verheiratet",
    "wohnart": "EFH (Eigentum)",
-   "verwandt": "Hugo Neumann - Sohn",
+   "verwandt": "Carmen Martinez-Neumann - Ehefrau\nRegina Neumann - Mutter\nHugo Neumann - Sohn",
    "lebenslauf": "kommt ursprünglich aus Schleswig-Holstein\nRealschulabschluss\nkam für die Ausbildung nach Wiesbaden\narbeitet in der Stadtverwaltung",
    "aktivitaeten": "Gartenarbeit\nMottorradfahren (mit Freunden)\nehrenamtliche Tätigkeit - die Tafeln",
    "charakter": "freundlich\nweltoffen\ntechnikfreundlich\nreiselustig",
@@ -305,7 +305,7 @@
    "beruf": "Anlagenmechaniker (Azubi)",
    "familienstand": "keine Angabe",
    "wohnart": "Doppelhaushälfte (Eigentum)",
-   "verwandt": "Dieter Schuster - Vater",
+   "verwandt": "Nadine Tomic - Mutter\nLuka Tomic - Stiefvater\nLilly Tomic - Halbschwester\nDieter Schuster - Vater",
    "lebenslauf": "geboren im St. Josefs Hospital Wiesbaden\nGrundschule Wiesbaden-Brechenheim\nOtto-Rommel-Realschule Wiesbaden\nbeginnt 01.09. Ausbildung bei Gawasch Wiesbaden",
    "aktivitaeten": "Extremsportarten\nSkateboard\nComputerspiele\nFußball\nFitnessstudio",
    "charakter": "introvertiert\nsprunghaft\nunordentlich\nbeharrlich\nkörperlich stabil\nreizbar\ncool\nEinzelgänger",
@@ -336,7 +336,7 @@
    "beruf": "Einzelhandelskauffrau (Textil)",
    "familienstand": "verheiratet",
    "wohnart": "Reihenhaus (Eigentum) + ELW",
-   "verwandt": "Sohn und Enkelin",
+   "verwandt": "Martin Seidel - Ehemann\nAnna Seidel - Tochter\nSohn und Enkelin",
    "lebenslauf": "Mittlere Reife\nAusbildung im Einzelhandel\nMutterzeit\nArbeitet halbtags bei Nextlevel Sport",
    "aktivitaeten": "Familie\nHaus\nReisen (Camping)",
    "charakter": "Familienmensch\ngesellig\nkontaktfreudig\nbescheiden\nhilfsbereit\nfreundlich\nehrlich\nbegeisterungsfähig",
@@ -367,7 +367,7 @@
    "beruf": "Industriekauffrau",
    "familienstand": "ledig / in Beziehung",
    "wohnart": "Mietwohnung",
-   "verwandt": null,
+   "verwandt": "Susanne Seidel - Mutter\nMartin Seidel - Vater\nJasper Düring - Partner",
    "lebenslauf": "Abitur\nAusbildung zur Industriekauffrau\narbeitete nach der Ausbildung im Ausbildungsbetrieb (Fa. FlexMetall) weiter\nstudiert nebenberuflich Betriebswirtschaft",
    "aktivitaeten": "Reiten (Tressur auch Wettkämpfe, eigenes Pferd)\nliebt Fantasy (Bücher & Filme)",
    "charakter": "wechselhaft / sprunghaft\nunbekümmert\nspontan\nvoller Lebensfreude\nein guter und sicherer Arbeitsplatz ist ihr wichtig",
@@ -398,7 +398,7 @@
    "beruf": "Buchhalter",
    "familienstand": "verheiratet",
    "wohnart": "Reihenhaus (Eigentum) + ELW",
-   "verwandt": "Sohn + Enkelin",
+   "verwandt": "Susanne Seidel - Ehefrau\nAnna Seidel - Tochter\nSohn + Enkelin",
    "lebenslauf": "Mittlere Reife\nAusbildung als Buchhalter (inkl. Fortbildungen)\nLeitung der Buchhaltung bei Flex-Metall",
    "aktivitaeten": "Haus\nFernsehen\nFamilie\nFinanzen\nReisen (Camping)",
    "charakter": "Familienmensch\ngesellig\nhilfsbereit\n„Kontrolle ist gut.“\nsorgfältig\ndiszipliniert\nbesonnen",
@@ -429,7 +429,7 @@
    "beruf": "Rentnerin",
    "familienstand": "verheiratet",
    "wohnart": "EFH (Eigentum)",
-   "verwandt": "Sohn\nTochter\n2 Enkelkinder",
+   "verwandt": "Alois Stelzer - Ehemann\nSohn\nTochter\n2 Enkelkinder",
    "lebenslauf": "geboren in Wernigerode\nGrundschule in Braunlage\nAusbildung zur Krankenschwester\n3 Jahre als Krankenschwester gearbeitet\nUmzug nach Wiesbaden\nhat bis zur Rente als Sekretärin bei der HSK Wiesbaden gearbeitet",
    "aktivitaeten": "Kaffeetrinken mit der Nachbarin\nBriefe schreiben\nNähen, Häkeln, Stricken\nFernsehen\nEhrenamt Nachbarschaftshilfe",
    "charakter": "hilfsbereit\nzuverlässig\ndiszipliniert\nordentlich",
@@ -460,7 +460,7 @@
    "beruf": "Rentner",
    "familienstand": "verheiratet",
    "wohnart": "EFH (Eigentum)",
-   "verwandt": "Sohn\nTochter\n2 Enkelkinder",
+   "verwandt": "Hanne Stelzer - Ehefrau\nSohn\nTochter\n2 Enkelkinder",
    "lebenslauf": "geboren in Lobnik (Tschechien)\nmit 15 Flucht nach Deutschland\nAusbildung zum Schreiner\nals Schreiner / Schlosser bis zur Rente gearbeitet bei Flex-Metall",
    "aktivitaeten": "Gartenpflege\nFußball schauen (Ehrenmitglied Fußballverein)\nEssen gehen\nBinokelverein\n2 Enkelkinder",
    "charakter": "ruhig\nwohlwollend\nzuverlässig\nfreundlich\ndiszipliniert",
@@ -491,7 +491,7 @@
    "beruf": "Geschäftsführer",
    "familienstand": "verheiratet",
    "wohnart": "Doppelhaushälfte (Eigentum)",
-   "verwandt": null,
+   "verwandt": "Nadine Tomic - Ehefrau\nLilly Tomic - Tochter",
    "lebenslauf": "Albert-Einstein-Gymnasium in Böblingen\nStudium Maschinenbau Ulm\nUmzug nach Wiesbaden\nHeirat mit Nadine\narbeitete als Maschinenbauingenieur\nGeschäfsführer bei Flex-Metall",
    "aktivitaeten": "Mountainbike\nFußball aktiv\nJugendtrainer Fußball",
    "charakter": "extrovertiert\nfreundlich aber bestimmt\nwohlwollend\nzuverlässig",
@@ -522,7 +522,7 @@
    "beruf": "Schülerin",
    "familienstand": "keine Angabe",
    "wohnart": "Doppelhaushälfte (Eigentum)",
-   "verwandt": null,
+   "verwandt": "Nadine Tomic - Mutter\nLuka Tomic - Vater\nNico Schuster - Halbbruder",
    "lebenslauf": "geboren in Wiesbaden\nKindergarten\n2. Klasse in der Grundschule",
    "aktivitaeten": "hat viele Freundinnen\nredet gerne",
    "charakter": "sturrköpfig\nzickig\nlieb",
@@ -553,7 +553,7 @@
    "beruf": "Hausfrau",
    "familienstand": "verheiratet",
    "wohnart": "Doppelhaushälfte (Eigentum)",
-   "verwandt": "Ex-Ehemann - Dieter Schuster",
+   "verwandt": "Luka Tomic - Ehemann\nLilly Tomic - Tochter\nNico Schuster - Sohn\nEx-Ehemann - Dieter Schuster",
    "lebenslauf": "geboren in Wiesbaden\nGymnasium\nStudium Bachelor of Arts Steuern in Frankfurt\narbeitete als Steuerfachangestellte in der Steuerberatung\njetzt Hausfrau",
    "aktivitaeten": "Kochen\nElternbeirat\nTV und Radio (Castingsshows, Quiz, Liebesfilmde",
    "charakter": "sorgfältig\ndiszipliniert\nordentlich\nehrlich\nentspannt",
@@ -584,7 +584,7 @@
    "beruf": "Informatiker",
    "familienstand": "verheiratet",
    "wohnart": "Mietwohnung",
-   "verwandt": null,
+   "verwandt": "Anne Uhlig - Ehefrau\nAlina Uhlig - Tochter\nMalte Uhlig - Sohn",
    "lebenslauf": "Abitur mit 19 Jahren\nMasterabschluss Informatik (5 Jahre Studium)\nbeschäftigt in einer international tätigen Firma für Sicherheitssoftware\narbeitet im Homeoffice\nverheiratet seit 6 Jahren",
    "aktivitaeten": "Rudern\nFamilie",
    "charakter": "viel Lebensfreude\nverfolgt technische und ökologische Themen",
@@ -615,7 +615,7 @@
    "beruf": "Kindergartenkind",
    "familienstand": "keine Angabe",
    "wohnart": "EFH (Miete)",
-   "verwandt": null,
+   "verwandt": "Anne Uhlig - Mutter\nLars Uhlig - Vater\nAlina Uhlig - Zwillingsschwester",
    "lebenslauf": null,
    "aktivitaeten": null,
    "charakter": "schüchtern\nschweigsam",
@@ -646,7 +646,7 @@
    "beruf": "Kindergartenkind",
    "familienstand": "keine Angabe",
    "wohnart": "EFH (Miete)",
-   "verwandt": null,
+   "verwandt": "Anne Uhlig - Mutter\nLars Uhlig - Vater\nMalte Uhlig - Zwillingsbruder",
    "lebenslauf": null,
    "aktivitaeten": null,
    "charakter": "lebhaft\nimpulsiv",
@@ -677,7 +677,7 @@
    "beruf": "Architektin",
    "familienstand": "verheiratet",
    "wohnart": "Mietwohnung",
-   "verwandt": null,
+   "verwandt": "Lars Uhlig - Ehemann\nAlina Uhlig - Tochter\nMalte Uhlig - Sohn",
    "lebenslauf": "Abitur mit 19 Jahren\nMaster Architektur (6 Jahre)\nbeschäftigt in einem großen Architekturbüro\nverheiratet seit 6 Jahren",
    "aktivitaeten": "Bildungsreisen\nFamilie",
    "charakter": "viel Lebensfreude\nverfolgt ökologische und architektonische Themen",
@@ -894,7 +894,7 @@
    "beruf": "Geschäftsführerin / Inhaberin",
    "familienstand": "keine Angabe",
    "wohnart": "Mietwohnung",
-   "verwandt": null,
+   "verwandt": "Clara Larsson, Tochter\nPietro Mariani, Ehemann",
    "lebenslauf": null,
    "aktivitaeten": null,
    "charakter": null,
@@ -925,7 +925,7 @@
    "beruf": "Geschäftsführer / Inhaber",
    "familienstand": "keine Angabe",
    "wohnart": "Mietwohnung",
-   "verwandt": null,
+   "verwandt": "Clara Larsson, Tochter\nIda Larsson, Ehefrau",
    "lebenslauf": null,
    "aktivitaeten": null,
    "charakter": null,
@@ -1576,7 +1576,7 @@
    "beruf": "Senior-Consultant und  Podcast-Moderator",
    "familienstand": "geschieden",
    "wohnart": "Eigenheim",
-   "verwandt": null,
+   "verwandt": "Tochter: Sophie Zanini",
    "lebenslauf": "Gründer und Senior-Consultant (ehem. Geschäftsführer) von  \"Zeisig Finance Consulting\",",
    "aktivitaeten": "Kapitalmärkte, Wirtschaftspolitik, Nachhaltige Investments, Philosophie des Unternehmertums,",
    "charakter": "Visionär, Inspirierende Stimme, tiefgehendes Fachwissen, Finanzthemen einem breiten Publikum näherbringen.",
@@ -1607,7 +1607,7 @@
    "beruf": "Influencerin , Podcasterin, Junior-Consultant",
    "familienstand": "ledig / Single",
    "wohnart": "Einliegerwohnung beim Vater",
-   "verwandt": null,
+   "verwandt": "Vater: Gabriel Zeisig",
    "lebenslauf": "Bachelor in Wirtschaftswissenschaften mit Schwerpunkt Finanzen, Junior-Consultant bei \"Zeisig Finance Consulting\"",
    "aktivitaeten": "Co-Moderatorin des \"GZSZ - Der Finanzpodcast\"",
    "charakter": "Hervorragende Kommunikationsfähigkeit, Motivierend und erklärend in der Welt",
@@ -1695,7 +1695,7 @@
    "strasse": "Wiesbadener Straße 3",
    "plz": "65199",
    "ort": "Wiesbaden",
-   "sonstiges": "Mitarbeitende: 3 Angestellte, 2 Aushilfen\nPersonen: Claudio Mariani Inhaber\nPizzeria im EG\nGroße Wohnung im OG mit Dachterrasse\nAußenbereich bestuhlt\nBrauereifreie Theke"
+   "sonstiges": "Mitarbeitende: 3 Angestellte, 2 Aushilfen\nPizzeria im EG\nGroße Wohnung im OG mit Dachterrasse\nAußenbereich bestuhlt\nBrauereifreie Theke"
   },
   {
    "id": 8,
@@ -1763,6 +1763,11 @@
   },
   {
    "firmaId": 7,
+   "personaId": 30,
+   "funktionInFirma": "Inhaber"
+  },
+  {
+   "firmaId": 7,
    "personaId": 29,
    "funktionInFirma": "Inhaberin"
   },
@@ -1780,327 +1785,9 @@
    "firmaId": 8,
    "personaId": 3,
    "funktionInFirma": "Mitarbeiter"
-  },
-  {
-   "firmaId": 7,
-   "personaId": 30,
-   "funktionInFirma": "Geschäftsführer / Inhaber"
   }
  ],
- "beziehungen": [
-  {
-   "id": 1,
-   "personaId": 1,
-   "relatedPersonaId": 2,
-   "verhaeltnis": "Ehefrau"
-  },
-  {
-   "id": 2,
-   "personaId": 1,
-   "relatedPersonaId": 3,
-   "verhaeltnis": "Sohn"
-  },
-  {
-   "id": 3,
-   "personaId": 2,
-   "relatedPersonaId": 1,
-   "verhaeltnis": "Ehemann"
-  },
-  {
-   "id": 4,
-   "personaId": 2,
-   "relatedPersonaId": 3,
-   "verhaeltnis": "Sohn"
-  },
-  {
-   "id": 5,
-   "personaId": 3,
-   "relatedPersonaId": 2,
-   "verhaeltnis": "Mutter"
-  },
-  {
-   "id": 6,
-   "personaId": 3,
-   "relatedPersonaId": 1,
-   "verhaeltnis": "Vater"
-  },
-  {
-   "id": 7,
-   "personaId": 3,
-   "relatedPersonaId": 12,
-   "verhaeltnis": "Partnerin"
-  },
-  {
-   "id": 8,
-   "personaId": 5,
-   "relatedPersonaId": 29,
-   "verhaeltnis": "Mutter"
-  },
-  {
-   "id": 9,
-   "personaId": 6,
-   "relatedPersonaId": 8,
-   "verhaeltnis": "Ehemann"
-  },
-  {
-   "id": 10,
-   "personaId": 6,
-   "relatedPersonaId": 7,
-   "verhaeltnis": "Schwiegermutter"
-  },
-  {
-   "id": 11,
-   "personaId": 7,
-   "relatedPersonaId": 8,
-   "verhaeltnis": "Sohn"
-  },
-  {
-   "id": 12,
-   "personaId": 7,
-   "relatedPersonaId": 6,
-   "verhaeltnis": "Schwiegertochter"
-  },
-  {
-   "id": 13,
-   "personaId": 8,
-   "relatedPersonaId": 6,
-   "verhaeltnis": "Ehefrau"
-  },
-  {
-   "id": 14,
-   "personaId": 8,
-   "relatedPersonaId": 7,
-   "verhaeltnis": "Mutter"
-  },
-  {
-   "id": 15,
-   "personaId": 10,
-   "relatedPersonaId": 18,
-   "verhaeltnis": "Mutter"
-  },
-  {
-   "id": 16,
-   "personaId": 10,
-   "relatedPersonaId": 16,
-   "verhaeltnis": "Stiefvater"
-  },
-  {
-   "id": 17,
-   "personaId": 10,
-   "relatedPersonaId": 17,
-   "verhaeltnis": "Halbschwester"
-  },
-  {
-   "id": 18,
-   "personaId": 11,
-   "relatedPersonaId": 13,
-   "verhaeltnis": "Ehemann"
-  },
-  {
-   "id": 19,
-   "personaId": 11,
-   "relatedPersonaId": 12,
-   "verhaeltnis": "Tochter"
-  },
-  {
-   "id": 20,
-   "personaId": 12,
-   "relatedPersonaId": 11,
-   "verhaeltnis": "Mutter"
-  },
-  {
-   "id": 21,
-   "personaId": 12,
-   "relatedPersonaId": 13,
-   "verhaeltnis": "Vater"
-  },
-  {
-   "id": 22,
-   "personaId": 12,
-   "relatedPersonaId": 3,
-   "verhaeltnis": "Partner"
-  },
-  {
-   "id": 23,
-   "personaId": 13,
-   "relatedPersonaId": 11,
-   "verhaeltnis": "Ehefrau"
-  },
-  {
-   "id": 24,
-   "personaId": 13,
-   "relatedPersonaId": 12,
-   "verhaeltnis": "Tochter"
-  },
-  {
-   "id": 25,
-   "personaId": 14,
-   "relatedPersonaId": 15,
-   "verhaeltnis": "Ehemann"
-  },
-  {
-   "id": 26,
-   "personaId": 15,
-   "relatedPersonaId": 14,
-   "verhaeltnis": "Ehefrau"
-  },
-  {
-   "id": 27,
-   "personaId": 16,
-   "relatedPersonaId": 18,
-   "verhaeltnis": "Ehefrau"
-  },
-  {
-   "id": 28,
-   "personaId": 16,
-   "relatedPersonaId": 17,
-   "verhaeltnis": "Tochter"
-  },
-  {
-   "id": 29,
-   "personaId": 17,
-   "relatedPersonaId": 18,
-   "verhaeltnis": "Mutter"
-  },
-  {
-   "id": 30,
-   "personaId": 17,
-   "relatedPersonaId": 16,
-   "verhaeltnis": "Vater"
-  },
-  {
-   "id": 31,
-   "personaId": 17,
-   "relatedPersonaId": 10,
-   "verhaeltnis": "Halbbruder"
-  },
-  {
-   "id": 32,
-   "personaId": 18,
-   "relatedPersonaId": 16,
-   "verhaeltnis": "Ehemann"
-  },
-  {
-   "id": 33,
-   "personaId": 18,
-   "relatedPersonaId": 17,
-   "verhaeltnis": "Tochter"
-  },
-  {
-   "id": 34,
-   "personaId": 18,
-   "relatedPersonaId": 10,
-   "verhaeltnis": "Sohn"
-  },
-  {
-   "id": 35,
-   "personaId": 19,
-   "relatedPersonaId": 22,
-   "verhaeltnis": "Ehefrau"
-  },
-  {
-   "id": 36,
-   "personaId": 19,
-   "relatedPersonaId": 21,
-   "verhaeltnis": "Tochter"
-  },
-  {
-   "id": 37,
-   "personaId": 19,
-   "relatedPersonaId": 20,
-   "verhaeltnis": "Sohn"
-  },
-  {
-   "id": 38,
-   "personaId": 20,
-   "relatedPersonaId": 22,
-   "verhaeltnis": "Mutter"
-  },
-  {
-   "id": 39,
-   "personaId": 20,
-   "relatedPersonaId": 19,
-   "verhaeltnis": "Vater"
-  },
-  {
-   "id": 40,
-   "personaId": 20,
-   "relatedPersonaId": 21,
-   "verhaeltnis": "Zwillingsschwester"
-  },
-  {
-   "id": 41,
-   "personaId": 21,
-   "relatedPersonaId": 22,
-   "verhaeltnis": "Mutter"
-  },
-  {
-   "id": 42,
-   "personaId": 21,
-   "relatedPersonaId": 19,
-   "verhaeltnis": "Vater"
-  },
-  {
-   "id": 43,
-   "personaId": 21,
-   "relatedPersonaId": 20,
-   "verhaeltnis": "Zwillingsbruder"
-  },
-  {
-   "id": 44,
-   "personaId": 22,
-   "relatedPersonaId": 19,
-   "verhaeltnis": "Ehemann"
-  },
-  {
-   "id": 45,
-   "personaId": 22,
-   "relatedPersonaId": 21,
-   "verhaeltnis": "Tochter"
-  },
-  {
-   "id": 46,
-   "personaId": 22,
-   "relatedPersonaId": 20,
-   "verhaeltnis": "Sohn"
-  },
-  {
-   "id": 47,
-   "personaId": 29,
-   "relatedPersonaId": 5,
-   "verhaeltnis": "Tochter"
-  },
-  {
-   "id": 48,
-   "personaId": 29,
-   "relatedPersonaId": 30,
-   "verhaeltnis": "Ehemann"
-  },
-  {
-   "id": 49,
-   "personaId": 30,
-   "relatedPersonaId": 5,
-   "verhaeltnis": "Tochter"
-  },
-  {
-   "id": 50,
-   "personaId": 30,
-   "relatedPersonaId": 29,
-   "verhaeltnis": "Ehefrau"
-  },
-  {
-   "id": 51,
-   "personaId": 51,
-   "relatedPersonaId": 52,
-   "verhaeltnis": "Tochter"
-  },
-  {
-   "id": 52,
-   "personaId": 52,
-   "relatedPersonaId": 51,
-   "verhaeltnis": "Vater"
-  }
- ],
+ "beziehungen": [],
  "formate": [],
  "formatPersonas": []
 }

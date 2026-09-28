@@ -20,16 +20,17 @@ def data_uri(pfad, mime):
 
 
 def main(ziel):
-    with open(os.path.join(WEBAPP, "data", "lernwelt.json"), encoding="utf-8") as f:
+    with open(os.path.join(WEBAPP, "App_Data", "lernwelt.json"), encoding="utf-8") as f:
         daten = json.load(f)
     for p in daten["personas"]:
         for feld in ("bild", "bildGross"):
             wert = p.get(feld)
             if wert and not wert.startswith("data:"):
-                p[feld] = data_uri(os.path.join(WEBAPP, wert), "image/jpeg")
+                p[feld] = data_uri(os.path.join(WEBAPP, "App_Data", wert), "image/jpeg")
 
     css = open(os.path.join(WEBAPP, "assets", "app.css"), encoding="utf-8").read()
-    js = open(os.path.join(WEBAPP, "assets", "app.js"), encoding="utf-8").read()
+    js = (open(os.path.join(WEBAPP, "assets", "krypto.js"), encoding="utf-8").read() + "\n" +
+          open(os.path.join(WEBAPP, "assets", "app.js"), encoding="utf-8").read())
     logo = data_uri(os.path.join(WEBAPP, "assets", "ruv-logo.png"), "image/png")
     js = js.replace("assets/ruv-logo.png", logo)
     daten_json = json.dumps(daten, ensure_ascii=False).replace("</", "<\\/")

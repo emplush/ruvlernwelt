@@ -7,8 +7,8 @@ Aufruf:
 - <bilder-ordner> enthält die mit extract_bilder.py erzeugten Dateien
   <AccessID>.jpg (Hochformat) und <AccessID>_q.jpg (quadratisch).
 - Zeilen mit Vorname "-" sind Firmen und werden in die Firmen-Tabelle übernommen.
-- Namen im Feld "Verwandt" werden zu Beziehungen zwischen Personas; erkannte
-  Zeilen verschwinden aus dem Freitext, der Rest bleibt stehen.
+- Firmennamen im Feld "Verwandt" werden zu Firmenzuordnungen. Familienbeziehungen
+  werden nicht erzeugt; der Freitext bleibt als Vorlage erhalten.
 - Die Normalisierung (Gruppe, Geschlecht, Familienstand, Kundenprofil,
   Geburtstag) entspricht scripts/seed.ts der Abacus-App.
 """
@@ -124,8 +124,21 @@ def norm(text):
     return re.sub(r"[^a-z0-9äöüß]", "", text.lower())
 
 
+# Bekannte Tippfehler in der Access-Tabelle
+NAMENSKORREKTUR = {"Claudio Mariani": "Pietro Mariani"}
+
+
+def korrigieren(wert):
+    if not isinstance(wert, str):
+        return wert
+    for falsch, richtig in NAMENSKORREKTUR.items():
+        wert = wert.replace(falsch, richtig)
+    return wert
+
+
 def main(quelle, bilder, ziel):
     rows = json.load(open(quelle, encoding="utf-8"))
+    rows = [{k: korrigieren(v) for k, v in r.items()} for r in rows]
     rows.sort(key=lambda r: zahl(r["ID"]) or 0)
 
     firmen_rows = [r for r in rows if s(r["Vorname"]) is None]
@@ -234,8 +247,8 @@ def main(quelle, bilder, ziel):
             return beste
         return None
 
-    # Beziehungen aus dem Freitext "Verwandt"
-    beziehungen = []
+    # Firmennamen im Freitext "Verwandt" werden zu Firmenzuordnungen. Familienbeziehungen
+    # werden bewusst nicht erzeugt (werden in der App von Hand gepflegt); der Text bleibt stehen.
     for p in personas:
         if not p["verwandt"]:
             continue
@@ -243,13 +256,8 @@ def main(quelle, bilder, ziel):
         for zeile in p["verwandt"].split("\n"):
             if not zeile.strip():
                 continue
-            ziel_p = finde_persona(zeile)
-            firma = finde_firma(zeile)
-            if ziel_p and ziel_p["id"] != p["id"]:
-                beziehungen.append({"id": len(beziehungen) + 1, "personaId": p["id"],
-                                    "relatedPersonaId": ziel_p["id"],
-                                    "verhaeltnis": rest_ohne_name(zeile, ziel_p)})
-            elif firma:
+            firma = None if finde_persona(zeile) else finde_firma(zeile)
+            if firma:
                 if not any(fp["firmaId"] == firma["id"] and fp["personaId"] == p["id"] for fp in firma_personas):
                     firma_personas.append({"firmaId": firma["id"], "personaId": p["id"], "funktionInFirma": None})
             else:
@@ -270,7 +278,7 @@ def main(quelle, bilder, ziel):
         "personas": personas,
         "firmen": firmen,
         "firmaPersonas": firma_personas,
-        "beziehungen": beziehungen,
+        "beziehungen": [],
         "formate": [],
         "formatPersonas": [],
     }
@@ -279,7 +287,7 @@ def main(quelle, bilder, ziel):
         f.write("\n")
 
     print(f"{len(personas)} Personas, {len(firmen)} Firmen, {len(firma_personas)} Firmenzuordnungen, "
-          f"{len(beziehungen)} Beziehungen, {sum(1 for p in personas if p['bild'])} Bilder")
+          f"{sum(1 for p in personas if p['bild'])} Bilder")
     for h in hinweise:
         print("Hinweis:", h)
 
