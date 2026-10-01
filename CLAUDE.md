@@ -21,6 +21,7 @@ Läuft auf einem IIS ohne Datenbank (ASP.NET 4.x, ohne HTTPS). Alle Texte für N
 3. **`api/daten.ashx` nur in C#-5-Syntax** (der IIS übersetzt ohne Roslyn): kein `=>` bei Membern, kein `$""`, kein `?.`, kein `nameof`. Prüfen mit `mcs -langversion:5`.
 4. **Das Passwort verlässt den Browser nie** (Challenge-Response in `krypto.js` und `daten.ashx`). Änderungen am Protokoll immer auf beiden Seiten und im Testserver `tools/handbuch/testserver.py`.
 5. **`App_Data` nie überschreiben** bei Updates auf dem Server.
+6. **Geklärt:** Die Lizenz der RuV-Schriften und des Iconfonts ist für den IIS freigegeben. Die Persona-Illustrationen sind nicht KI-generiert, daher kein KI-Label an den Bildern. Neue KI-generierte Bilder bekämen das KI-Label aus dem Design-System.
 
 ## Prüfen und veröffentlichen
 
