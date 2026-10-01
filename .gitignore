@@ -2,3 +2,7 @@
 webapp/App_Data/anmeldung.json
 webapp/App_Data/sicherung/
 webapp/App_Data/*.tmp
+
+# Abacus-Exporte (enthalten Zugangsdaten) nicht einchecken
+*.zip
+.env

@@ -1,7 +1,7 @@
 # R+V Lernwelt – Persona-Datenbank
 
 Web-App zur Verwaltung der Personas, Firmen und E-Learning-Formate, die in der Lernwelt für das Storytelling genutzt werden.
-Nachbau der Abacus-App (`Persona_Datenverwaltung_Tool.zip`) für den IIS: **ohne Datenbank, ohne Node.js und ohne Build-Schritt**.
+Nachbau der Abacus-App „Persona-Datenverwaltung“ für den IIS: **ohne Datenbank, ohne Node.js und ohne Build-Schritt**.
 
 ## Inhalt
 
@@ -74,11 +74,11 @@ Zum erneuten Ausführen der Übernahme:
 
 ```bash
 pip install olefile pymupdf pillow
-# 1. Bilder aus Access auslesen (Jackcess-JARs liegen in der Abacus-ZIP)
+# 1. Bilder aus Access auslesen (Jackcess-JARs und Access-Datei stammen aus dem Abacus-Export, nicht im Repository)
 javac -cp jackcess.jar:commons-lang.jar:commons-lang3.jar:commons-logging.jar tools/migration/DumpOle.java
 java  -cp jackcess.jar:commons-lang.jar:commons-lang3.jar:commons-logging.jar:tools/migration DumpOle Lernwelt_Test.accdb   # schreibt ole/*.bin
 python3 tools/migration/extract_bilder.py ole webapp/App_Data/bilder
-# 2. Daten umwandeln (lernwelt_data.json stammt aus der Abacus-ZIP)
+# 2. Daten umwandeln (lernwelt_data.json stammt aus dem Abacus-Export)
 python3 tools/migration/migrate.py lernwelt_data.json webapp/App_Data/bilder webapp/App_Data/lernwelt.json
 ```
 
