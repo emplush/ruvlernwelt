@@ -1,0 +1,277 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Handbuch Persona-Datenbank</title>
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/app.css">
+<link rel="stylesheet" href="assets/handbuch.css">
+</head>
+<body>
+<header class="hb-kopf">
+  <div class="hb-kopf-innen">
+    <img class="hb-logo" src="assets/logo-negativ.svg" alt="R+V">
+    <div class="hb-kopf-text">
+      <p class="topline">Handbuch</p>
+      <h1>R+V Lernwelt – Persona-Datenbank</h1>
+      <p class="hb-stand">Stand: <span id="hb-stand">1. Oktober 2026</span> · für Redaktion, Mediengestaltung und Administration</p>
+    </div>
+    <div class="hb-aktionen">
+      <a class="knopf knopf-primaer" href="handbuch.pdf" download="Handbuch-Persona-Datenbank.pdf"><span class="icon" aria-hidden="true">&#xe96f;</span>Als PDF herunterladen</a>
+      <a class="knopf hb-knopf-hell" href="./"><span class="icon" aria-hidden="true">&#xe979;</span>Zur Anwendung</a>
+    </div>
+  </div>
+</header>
+
+<div class="hb-rahmen">
+  <nav class="hb-inhalt" aria-label="Inhalt">
+    <p class="hb-inhalt-titel">Inhalt</p>
+    <ol>
+      <li><a href="#ueberblick">Überblick</a></li>
+      <li><a href="#anmelden">Anmelden und Abmelden</a></li>
+      <li><a href="#personas-finden">Personas finden</a></li>
+      <li><a href="#persona-ansehen">Eine Persona ansehen</a></li>
+      <li><a href="#persona-bearbeiten">Personas anlegen und bearbeiten</a></li>
+      <li><a href="#profilbild">Profilbild hochladen</a></li>
+      <li><a href="#familie">Familienbeziehungen</a></li>
+      <li><a href="#firmen">Firmen</a></li>
+      <li><a href="#formate">E-Learning-Formate</a></li>
+      <li><a href="#loeschen">Löschen</a></li>
+      <li><a href="#einstellungen">Einstellungen und Passwort</a></li>
+      <li><a href="#sicherung">Daten sichern und wiederherstellen</a></li>
+      <li><a href="#darstellung">Darstellung und Smartphone</a></li>
+      <li><a href="#administration">Für die Administration</a></li>
+      <li><a href="#fragen">Fragen und Probleme</a></li>
+    </ol>
+  </nav>
+
+  <main class="hb-text">
+
+    <section id="ueberblick">
+      <p class="topline">Kapitel 1</p>
+      <h2>Überblick</h2>
+      <p>Die Persona-Datenbank sammelt die Figuren, die in den E-Learning-Formaten der Lernwelt auftreten: Kundinnen und Kunden, Mitarbeitende im Innen- und Außendienst, Bankberater und ihre Firmen. Wer ein neues Format plant, findet hier Lebenslauf, Charakter, Wohnsituation, Familie, Bildmaterial und Stimme jeder Persona an einem Ort.</p>
+      <p>Die Anwendung kennt drei Bereiche, die Sie über die Navigation links erreichen:</p>
+      <dl class="hb-begriffe">
+        <dt>Personas</dt><dd>Die Figuren mit allen Angaben, ihrem Profilbild und ihren Beziehungen untereinander.</dd>
+        <dt>Firmen</dt><dd>Unternehmen und Betriebe, denen Personas angehören, zum Beispiel als Inhaberin oder Geschäftsführer.</dd>
+        <dt>E-Learning-Formate</dt><dd>Lernprogramme, Videos und Podcasts mit den Personas, die darin vorkommen.</dd>
+      </dl>
+      <p>Alle Änderungen werden sofort auf dem Server gespeichert und sind für alle anderen sichtbar, sobald diese die Seite neu laden.</p>
+    </section>
+
+    <section id="anmelden">
+      <p class="topline">Kapitel 2</p>
+      <h2>Anmelden und Abmelden</h2>
+      <figure><img src="handbuch/anmeldung.jpg" alt="Anmeldeseite mit Passwortfeld und Schaltfläche Anmelden" loading="lazy"><figcaption>Die Anmeldeseite</figcaption></figure>
+      <ol class="hb-schritte">
+        <li>Öffnen Sie die Adresse der Anwendung im Browser (Edge, Chrome oder Firefox).</li>
+        <li>Geben Sie das gemeinsame Passwort ein und wählen Sie <b>Anmelden</b>. Die Prüfung dauert etwa eine Sekunde.</li>
+        <li>Zum Abmelden wählen Sie unten in der Navigation <b>Abmelden</b>.</li>
+      </ol>
+      <p>Die Anmeldung gilt 10 Stunden. Danach fragt die Anwendung erneut nach dem Passwort. Nach fünf falschen Eingaben ist die Anmeldung von Ihrem Rechner aus 15 Minuten gesperrt.</p>
+      <p class="hb-hinweis"><b>Sicherheit:</b> Das Passwort wird nie über das Netzwerk geschickt, auch nicht ohne HTTPS. Ihr Browser weist dem Server nur nach, dass er das Passwort kennt. Wählen Sie trotzdem ein langes Passwort, denn wer den Netzwerkverkehr mitliest, kann kurze Passwörter durchprobieren.</p>
+    </section>
+
+    <section id="personas-finden">
+      <p class="topline">Kapitel 3</p>
+      <h2>Personas finden</h2>
+      <figure><img src="handbuch/liste.jpg" alt="Übersicht der Personas als Kacheln mit Suchfeld und zwei Filtern" loading="lazy"><figcaption>Die Personas-Übersicht mit Suche und Filtern</figcaption></figure>
+      <p>Nach der Anmeldung sehen Sie alle Personas als Kacheln, alphabetisch nach Nachnamen. Jede Kachel zeigt Bild, Name, Funktion in der Lernwelt, Persona-ID und Gruppe.</p>
+      <ul>
+        <li><b>Suche:</b> Tippen Sie einen Teil von Name, Funktion, Beruf, Ort, Gruppe oder der Persona-ID. Die Liste filtert sofort.</li>
+        <li><b>Gruppe</b> und <b>Kundenprofil:</b> Grenzen Sie die Liste zusätzlich ein. Suche und beide Filter lassen sich kombinieren. Aktive Filter haben einen dicken Rahmen.</li>
+        <li>Über der Liste steht, wie viele Personas gerade angezeigt werden.</li>
+      </ul>
+      <p>Ein Klick auf eine Kachel öffnet die Persona.</p>
+    </section>
+
+    <section id="persona-ansehen">
+      <p class="topline">Kapitel 4</p>
+      <h2>Eine Persona ansehen</h2>
+      <figure><img src="handbuch/detail.jpg" alt="Detailseite einer Persona mit Bild, Kopfbereich und Abschnitten" loading="lazy"><figcaption>Die Detailseite einer Persona</figcaption></figure>
+      <p>Oben stehen Bild, Gruppe, Name, Funktion und Beruf sowie die wichtigsten Eckdaten. Darunter folgen die Abschnitte <i>Persönliche Daten</i>, <i>Kontakt &amp; Wohnen</i>, <i>Beruf &amp; Rolle</i>, <i>Biografie</i>, <i>Familie</i>, <i>Persönlichkeit</i>, <i>Firmenzugehörigkeit</i>, <i>Voiceover &amp; Avatar</i>, <i>Links &amp; Medien</i> und <i>E-Learning-Formate</i>. Leere Felder werden ausgeblendet.</p>
+      <h3>Bildordner öffnen</h3>
+      <p>Unter <b>Links &amp; Medien</b> steht der Ordner mit dem Bildmaterial der Persona auf dem Netzlaufwerk.</p>
+      <ul>
+        <li><b>Ordner im Explorer öffnen</b> versucht, den Ordner direkt zu öffnen. Viele Browser blockieren das aus Sicherheitsgründen.</li>
+        <li><b>Pfad kopieren</b> legt den Pfad in die Zwischenablage. Fügen Sie ihn in die Adresszeile des Windows-Explorers ein und drücken Sie die Eingabetaste.</li>
+      </ul>
+      <p>Verknüpfte Familienmitglieder, Firmen und Formate sind anklickbar und führen direkt zur jeweiligen Seite.</p>
+    </section>
+
+    <section id="persona-bearbeiten">
+      <p class="topline">Kapitel 5</p>
+      <h2>Personas anlegen und bearbeiten</h2>
+      <figure><img src="handbuch/formular.jpg" alt="Formular zum Bearbeiten einer Persona" loading="lazy"><figcaption>Das Formular zum Bearbeiten</figcaption></figure>
+      <ol class="hb-schritte">
+        <li>Für eine neue Persona wählen Sie in der Übersicht <b>Neue Persona</b>. Für eine bestehende öffnen Sie die Persona und wählen <b>Bearbeiten</b>.</li>
+        <li>Füllen Sie die Felder aus. Pflicht sind nur <b>Vorname</b> und <b>Name</b>.</li>
+        <li>Wählen Sie <b>Speichern</b> (oben oder am Ende des Formulars). Sie landen danach auf der Detailseite.</li>
+      </ol>
+      <h3>Besondere Felder</h3>
+      <dl class="hb-begriffe">
+        <dt>Geburtstag</dt><dd>Tag und Monat, ohne Jahr. Das Alter steht in einem eigenen Feld.</dd>
+        <dt>Persona-ID</dt><dd>Die Nummer aus der früheren Access-Datenbank, z. B. 1004. Jede Nummer darf nur einmal vorkommen.</dd>
+        <dt>Gruppe, Kundenprofil, Customer Journey, Familienstand, Geschlecht</dt><dd>Auswahllisten mit festen Werten, damit die Filter zuverlässig funktionieren.</dd>
+        <dt>Firmenzuordnung</dt><dd>Mit <b>Firma hinzufügen</b> ordnen Sie die Persona einer oder mehreren Firmen zu, jeweils mit ihrer Funktion dort.</dd>
+        <dt>Weitere Familienangaben</dt><dd>Freitext für Angehörige, die keine eigene Persona sind, z. B. „Sohn Fynn-Luka, 8 Jahre“.</dd>
+        <dt>Bilder-Link</dt><dd>Pfad zum Bildordner, z. B. <code>X:\9991_Medienbibliothek\06_Lernwelt\01_Personen\1004 - Ottmar Duering</code>.</dd>
+      </dl>
+      <p class="hb-hinweis"><b>Gleichzeitiges Bearbeiten:</b> Hat jemand anderes inzwischen gespeichert, erscheint die Meldung „Daten wurden inzwischen geändert“. Laden Sie dann die Seite neu und tragen Sie Ihre Änderung erneut ein. So überschreibt niemand unbemerkt die Arbeit anderer.</p>
+    </section>
+
+    <section id="profilbild">
+      <p class="topline">Kapitel 6</p>
+      <h2>Profilbild hochladen</h2>
+      <figure><img src="handbuch/zuschnitt.jpg" alt="Dialog zum Wählen des Bildausschnitts mit Zoomregler" loading="lazy"><figcaption>Bildausschnitt wählen</figcaption></figure>
+      <ol class="hb-schritte">
+        <li>Öffnen Sie die Persona und wählen Sie <b>Bearbeiten</b>.</li>
+        <li>Wählen Sie im Abschnitt <b>Profilbild</b> die Schaltfläche <b>Bild auswählen</b> (oder <b>Bild ändern</b>). Erlaubt sind JPG, PNG und WebP.</li>
+        <li>Verschieben Sie das Bild mit der Maus und stellen Sie mit dem Regler oder dem Mausrad den Zoom ein. Der quadratische Ausschnitt erscheint auf den Kacheln.</li>
+        <li>Wählen Sie <b>Ausschnitt übernehmen</b> und anschließend <b>Speichern</b>.</li>
+      </ol>
+      <p>Das vollständige Bild wird verkleinert ebenfalls gespeichert und erscheint auf der Detailseite. Mit <b>Ausschnitt anpassen</b> ändern Sie später nur den Kachel-Ausschnitt, ohne das Bild neu hochzuladen. <b>Bild löschen</b> entfernt das Bild von der Persona.</p>
+    </section>
+
+    <section id="familie">
+      <p class="topline">Kapitel 7</p>
+      <h2>Familienbeziehungen</h2>
+      <figure><img src="handbuch/familie.jpg" alt="Abschnitt Familie mit Eingabefeldern für Person, Verhältnis und Gegenrichtung" loading="lazy"><figcaption>Eine Beziehung direkt auf der Detailseite hinzufügen</figcaption></figure>
+      <p>Familienbeziehungen verbinden zwei Personas. Jede Beziehung hat zwei Richtungen:</p>
+      <ul>
+        <li><b>Verhältnis:</b> Was ist die gewählte Person für die aktuelle Persona? Beispiel: Für Ottmar Düring ist Heidrun Düring die <i>Ehefrau</i>.</li>
+        <li><b>Gegenrichtung (optional):</b> Was ist die aktuelle Persona für die gewählte Person? Im Beispiel: Ottmar ist für Heidrun der <i>Ehemann</i>. Tragen Sie die Gegenrichtung ein, erscheint die Beziehung auf beiden Detailseiten richtig beschriftet.</li>
+      </ul>
+      <p>Sie können Beziehungen auf der Detailseite über <b>+ Beziehung</b> hinzufügen oder im Formular unter <b>Familie</b> pflegen. Das <b>×</b> neben einem Eintrag entfernt die Verbindung auf beiden Seiten.</p>
+      <p>Die früheren Angaben aus Access stehen bei jeder Persona unter <i>Weitere Familienangaben</i>. Sie dienen als Vorlage zum Eintragen.</p>
+    </section>
+
+    <section id="firmen">
+      <p class="topline">Kapitel 8</p>
+      <h2>Firmen</h2>
+      <figure><img src="handbuch/firmen.jpg" alt="Übersicht der Firmen als Kacheln" loading="lazy"><figcaption>Die Firmen-Übersicht</figcaption></figure>
+      <p>Die Firmen-Übersicht zeigt Name, Kundenart, Branche und die Anzahl zugeordneter Personas. Die Suche durchsucht Name, Branche und Ort.</p>
+      <ol class="hb-schritte">
+        <li>Wählen Sie <b>Neue Firma</b> oder öffnen Sie eine Firma und wählen Sie <b>Bearbeiten</b>.</li>
+        <li>Pflicht ist nur der <b>Name</b>. Unter <b>Funktion</b> wählen Sie Firmen-, Gewerbe- oder Unternehmenskunde.</li>
+        <li>Unter <b>Personas zuordnen</b> tippen Sie einen Namen ins Suchfeld, wählen die Persona aus der Trefferliste und tragen ihre Funktion in der Firma ein.</li>
+        <li>Wählen Sie <b>Speichern</b>.</li>
+      </ol>
+      <p>Die Zuordnung erscheint auch bei der Persona unter <i>Firmenzugehörigkeit</i>. Sie lässt sich von beiden Seiten aus pflegen.</p>
+    </section>
+
+    <section id="formate">
+      <p class="topline">Kapitel 9</p>
+      <h2>E-Learning-Formate</h2>
+      <figure><img src="handbuch/format.jpg" alt="Formular für ein E-Learning-Format mit Persona-Auswahl" loading="lazy"><figcaption>Ein Format anlegen und Personas zuweisen</figcaption></figure>
+      <ol class="hb-schritte">
+        <li>Wählen Sie unter <b>E-Learning-Formate</b> die Schaltfläche <b>Neues Format</b>.</li>
+        <li>Pflicht sind <b>Name</b>, <b>Format-Typ</b> (Lernprogramm, Video oder Podcast) und <b>Medienentwickler</b>.</li>
+        <li>Optional tragen Sie die dreistellige <b>ID</b>, einen <b>Datei-Link</b> zum Projektordner und einen <b>HTTP-Link</b> zur veröffentlichten Fassung ein.</li>
+        <li>Haken Sie unter <b>Personas zuweisen</b> alle Personas an, die im Format vorkommen. Das Suchfeld darüber grenzt die Liste ein.</li>
+        <li>Wählen Sie <b>Speichern</b>.</li>
+      </ol>
+      <p>In der Übersicht können Sie nach Name und Mediengestalter suchen und nach Format-Typ filtern. Jede Persona zeigt auf ihrer Detailseite, in welchen Formaten sie vorkommt.</p>
+    </section>
+
+    <section id="loeschen">
+      <p class="topline">Kapitel 10</p>
+      <h2>Löschen</h2>
+      <p>Personas, Firmen und Formate löschen Sie auf ihrer Detailseite mit <b>Löschen</b>. Die Anwendung fragt vorher nach.</p>
+      <ul>
+        <li><b>Persona löschen:</b> Ihre Familienbeziehungen, Firmenzuordnungen und Formatzuweisungen werden mit entfernt.</li>
+        <li><b>Firma oder Format löschen:</b> Die zugeordneten Personas bleiben erhalten, nur die Zuordnung verschwindet.</li>
+      </ul>
+      <p>Vor jedem Speichern legt der Server eine Sicherungskopie an. Versehentlich Gelöschtes kann die Administration daher wiederherstellen (siehe <a href="#administration">Kapitel 14</a>).</p>
+    </section>
+
+    <section id="einstellungen">
+      <p class="topline">Kapitel 11</p>
+      <h2>Einstellungen und Passwort</h2>
+      <figure><img src="handbuch/einstellungen.jpg" alt="Seite Einstellungen mit den Karten Anwendung, Anmeldung und Passwort, Hilfe und Datenhaltung" loading="lazy"><figcaption>Die Einstellungen</figcaption></figure>
+      <h3>Titel der Anwendung</h3>
+      <p>Der Titel erscheint in der Navigation, auf der Anmeldeseite und im Browser-Tab. Ändern Sie ihn unter <b>Anwendung</b> und wählen Sie <b>Titel speichern</b>.</p>
+      <h3>Passwort ändern</h3>
+      <ol class="hb-schritte">
+        <li>Geben Sie unter <b>Anmeldung &amp; Passwort</b> das aktuelle Passwort ein.</li>
+        <li>Geben Sie das neue Passwort zweimal ein. Es muss mindestens 8 Zeichen lang sein.</li>
+        <li>Wählen Sie <b>Passwort ändern</b>.</li>
+      </ol>
+      <p>Alle anderen Personen werden dabei abgemeldet und brauchen das neue Passwort. Ein Wechsel des Standardpassworts <code>RuVTest1234</code> wird nicht erzwungen, ist aber empfehlenswert.</p>
+      <h3>Passwortabfrage aus- und einschalten</h3>
+      <p>Mit <b>Passwortabfrage deaktivieren</b> ist die Anwendung ohne Anmeldung erreichbar. Jede Person im Netzwerk kann dann alle Daten sehen und ändern. Zum Ein- und Ausschalten ist das aktuelle Passwort nötig.</p>
+    </section>
+
+    <section id="sicherung">
+      <p class="topline">Kapitel 12</p>
+      <h2>Daten sichern und wiederherstellen</h2>
+      <ul>
+        <li><b>Daten exportieren</b> (unter <i>Einstellungen → Datenhaltung</i>) lädt alle Texte als JSON-Datei herunter. Bewahren Sie die Datei als Sicherung auf.</li>
+        <li><b>Daten importieren</b> ersetzt den kompletten Datenbestand durch den Inhalt einer exportierten Datei. Die Anwendung fragt vorher nach und nennt die Anzahl der Personas, Firmen und Formate in der Datei.</li>
+      </ul>
+      <p>Die Profilbilder sind nicht im Export enthalten. Sie liegen auf dem Server im Ordner <code>App_Data/bilder</code>.</p>
+    </section>
+
+    <section id="darstellung">
+      <p class="topline">Kapitel 13</p>
+      <h2>Darstellung und Smartphone</h2>
+      <figure class="hb-schmal"><img src="handbuch/mobil.jpg" alt="Personas-Übersicht auf einem Smartphone" loading="lazy"><figcaption>Auf dem Smartphone</figcaption></figure>
+      <p>Die Anwendung folgt der Hell- oder Dunkel-Einstellung Ihres Systems. Mit <b>Dunkles Design</b> bzw. <b>Helles Design</b> unten in der Navigation wechseln Sie selbst. Ihr Browser merkt sich die Wahl.</p>
+      <p>Auf Smartphone und Tablet öffnen Sie die Navigation über das Menüsymbol oben links. Alle Funktionen stehen auch dort zur Verfügung.</p>
+    </section>
+
+    <section id="administration">
+      <p class="topline">Kapitel 14</p>
+      <h2>Für die Administration</h2>
+      <h3>Installation auf dem IIS</h3>
+      <ol class="hb-schritte">
+        <li>Im Server-Manager das Feature <b>ASP.NET 4.x</b> aktivieren (Webserver → Anwendungsentwicklung).</li>
+        <li>Den Ordner <code>webapp</code> auf den Server kopieren, z. B. nach <code>C:\inetpub\lernwelt-personas</code>.</li>
+        <li>Im IIS-Manager eine Website oder Anwendung mit diesem physischen Pfad anlegen. Der Anwendungspool nutzt .NET CLR v4.0.</li>
+        <li>Der Identität des Anwendungspools das Recht <b>Ändern</b> auf <code>webapp\App_Data</code> geben.</li>
+      </ol>
+      <h3>Wo liegen die Daten?</h3>
+      <dl class="hb-begriffe">
+        <dt><code>App_Data/lernwelt.json</code></dt><dd>Alle Texte und Zuordnungen.</dd>
+        <dt><code>App_Data/bilder/</code></dt><dd>Profilbilder.</dd>
+        <dt><code>App_Data/sicherung/</code></dt><dd>Die letzten 50 Fassungen von <code>lernwelt.json</code>, eine pro Speichervorgang, mit Datum und Uhrzeit im Namen.</dd>
+        <dt><code>App_Data/anmeldung.json</code></dt><dd>Schlüssel des Passworts und Einstellung der Passwortabfrage.</dd>
+      </dl>
+      <p>Der IIS gibt den Ordner <code>App_Data</code> nie direkt heraus. Die Daten sind nur über die Anwendung und nur nach der Anmeldung erreichbar.</p>
+      <h3>Häufige Aufgaben</h3>
+      <ul>
+        <li><b>Passwort vergessen:</b> <code>App_Data/anmeldung.json</code> löschen. Danach gilt wieder <code>RuVTest1234</code>.</li>
+        <li><b>Älteren Stand wiederherstellen:</b> Die gewünschte Datei aus <code>App_Data/sicherung/</code> nach <code>App_Data/lernwelt.json</code> kopieren.</li>
+        <li><b>Anwendung aktualisieren:</b> <code>index.html</code>, <code>handbuch.html</code>, <code>handbuch.pdf</code>, <code>handbuch/</code>, <code>assets/</code>, <code>api/</code> und <code>web.config</code> ersetzen. Den Ordner <code>App_Data</code> nie überschreiben.</li>
+      </ul>
+    </section>
+
+    <section id="fragen">
+      <p class="topline">Kapitel 15</p>
+      <h2>Fragen und Probleme</h2>
+      <dl class="hb-faq">
+        <dt>„Die Anwendung konnte nicht gestartet werden.“</dt>
+        <dd>Der Server-Teil antwortet nicht. Meist fehlt auf dem IIS das Feature ASP.NET 4.x. Wenden Sie sich an die Administration.</dd>
+        <dt>Oben erscheint „Der Server darf im Ordner … nicht schreiben“.</dt>
+        <dd>Lesen funktioniert, Speichern nicht. Dem Anwendungspool fehlt das Recht „Ändern“ auf <code>App_Data</code>.</dd>
+        <dt>„Zu viele Fehlversuche“.</dt>
+        <dd>Nach fünf falschen Passwörtern ist die Anmeldung von Ihrem Rechner aus 15 Minuten gesperrt. Warten Sie und versuchen Sie es dann erneut.</dd>
+        <dt>„Ihre Sitzung ist abgelaufen.“</dt>
+        <dd>Die Anmeldung gilt 10 Stunden, oder jemand hat das Passwort geändert. Melden Sie sich erneut an.</dd>
+        <dt>„Daten wurden inzwischen geändert“.</dt>
+        <dd>Jemand anderes hat gespeichert, während Sie bearbeitet haben. Laden Sie die Seite neu und wiederholen Sie Ihre Änderung.</dd>
+        <dt>Der Explorer-Link öffnet nichts.</dt>
+        <dd>Browser blockieren das oft. Nutzen Sie <b>Pfad kopieren</b> und fügen Sie den Pfad in die Adresszeile des Windows-Explorers ein.</dd>
+      </dl>
+    </section>
+
+  </main>
+</div>
+
+<footer class="hb-fuss">
+  <p>R+V Lernwelt – Persona-Datenbank · Handbuch · Stand 1. Oktober 2026</p>
+</footer>
+</body>
+</html>
