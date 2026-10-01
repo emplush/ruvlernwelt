@@ -23,43 +23,19 @@
     monate: ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember']
   };
 
+  // Symbole aus dem R+V-Iconfont "RuV-Icons-v3" (Codepunkte im Bereich U+E900)
   var ICONS = {
-    personen: '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',
-    person: '<path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>',
-    firma: '<rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 22v-4h6v4"/><path d="M8 6h.01M16 6h.01M12 6h.01M12 10h.01M12 14h.01M16 10h.01M16 14h.01M8 10h.01M8 14h.01"/>',
-    buch: '<path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>',
-    einstellungen: '<path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/>',
-    suche: '<circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>',
-    plus: '<path d="M5 12h14M12 5v14"/>',
-    zurueck: '<path d="m12 19-7-7 7-7M19 12H5"/>',
-    stift: '<path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/>',
-    papierkorb: '<path d="M3 6h18M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>',
-    x: '<path d="M18 6 6 18M6 6l12 12"/>',
-    speichern: '<path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><path d="M17 21v-8H7v8M7 3v5h8"/>',
-    ordner: '<path d="m6 14 1.45-2.9A2 2 0 0 1 9.24 10H20a2 2 0 0 1 1.94 2.5l-1.55 6a2 2 0 0 1-1.94 1.5H4a2 2 0 0 1-2-2V5c0-1.1.9-2 2-2h3.93a2 2 0 0 1 1.66.9l.82 1.2a2 2 0 0 0 1.66.9H18a2 2 0 0 1 2 2v2"/>',
-    kopieren: '<rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>',
-    extern: '<path d="M15 3h6v6M10 14 21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>',
-    ort: '<path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/>',
-    koffer: '<rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>',
-    herz: '<path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>',
-    gehirn: '<path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z"/><path d="M12 5a3 3 0 1 1 5.997.125 4 4 0 0 1 2.526 5.77 4 4 0 0 1-.556 6.588A4 4 0 1 1 12 18Z"/>',
-    mikro: '<path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2M12 19v3"/>',
-    hochladen: '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/>',
-    herunterladen: '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/>',
-    zuschnitt: '<path d="M6 2v14a2 2 0 0 0 2 2h14"/><path d="M18 22V8a2 2 0 0 0-2-2H2"/>',
-    abmelden: '<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/>',
-    schloss: '<rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>',
-    menue: '<path d="M4 6h16M4 12h16M4 18h16"/>',
-    mond: '<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>',
-    sonne: '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>',
-    datenbank: '<ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14a9 3 0 0 0 18 0V5"/><path d="M3 12a9 3 0 0 0 18 0"/>',
-    video: '<path d="m22 8-6 4 6 4V8Z"/><rect x="2" y="6" width="14" height="12" rx="2"/>',
-    kopfhoerer: '<path d="M3 14h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-7a9 9 0 0 1 18 0v7a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3"/>',
-    monitor: '<rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/>'
+    personen: 'e929', person: 'e92c', firma: 'e924', buch: 'e9da', einstellungen: 'e9a6',
+    suche: 'e972', plus: 'e97c', zurueck: 'e979', stift: 'e981', papierkorb: 'e992', x: 'e97b',
+    speichern: 'e9d9', ordner: 'e933', kopieren: 'e9ce', extern: 'e973', ort: 'e93c',
+    koffer: 'e958', herz: 'e9d4', gehirn: 'e944', mikro: 'e9d1', hochladen: 'e96e',
+    herunterladen: 'e96f', zuschnitt: 'e967', menue: 'e96b', mond: 'e993', sonne: 'e946',
+    datenbank: 'e932', video: 'e9cb', kopfhoerer: 'e9a4', monitor: 'e954', abmelden: 'e98e',
+    schloss: 'e956', hilfe: 'e904', fehler: 'e902', info: 'e900', ok: 'e984'
   };
 
   function icon(name, extraKlasse) {
-    return '<svg class="icon ' + (extraKlasse || '') + '" viewBox="0 0 24 24" aria-hidden="true">' + (ICONS[name] || '') + '</svg>';
+    return '<span class="icon ' + (extraKlasse || '') + '" aria-hidden="true">&#x' + (ICONS[name] || 'e900') + ';</span>';
   }
 
   function esc(wert) {
@@ -287,13 +263,15 @@
     var app = document.getElementById('app');
     app.className = 'app';
     app.innerHTML = '<div class="anmeldung-huelle"><form class="anmeldung" id="anmelde-form" novalidate>' +
-      '<span class="nav-logo anmeldung-logo"><img src="assets/ruv-logo.png" alt="R+V"></span>' +
+      '<img class="anmeldung-logo" src="assets/logo-claim-positiv.svg" alt="R+V – Du bist nicht allein.">' +
+      '<p class="topline">Lernwelt</p>' +
       '<h1>' + esc(titel || document.title || 'R+V Lernwelt – Persona-Datenbank') + '</h1>' +
       '<p class="anmeldung-text">Bitte geben Sie das Passwort ein.</p>' +
       (hinweis ? '<p class="anmeldung-hinweis" role="status">' + esc(hinweis) + '</p>' : '') +
       '<div class="feld"><label for="anm-passwort">Passwort</label><input id="anm-passwort" type="password" autocomplete="current-password" required></div>' +
       '<p class="anmeldung-fehler" id="anm-fehler" role="alert" hidden></p>' +
       '<button type="submit" class="knopf knopf-primaer" id="anm-knopf">Anmelden</button>' +
+      '<a class="link" href="handbuch.html" target="_blank" rel="noopener">' + icon('hilfe') + 'Hilfe zur Anmeldung</a>' +
       '</form></div><div class="toasts" id="toasts" aria-live="polite"></div>';
     var feldEl = document.getElementById('anm-passwort');
     feldEl.focus();
@@ -301,7 +279,7 @@
       e.preventDefault();
       var knopf = document.getElementById('anm-knopf');
       var fehler = document.getElementById('anm-fehler');
-      if (!feldEl.value) { fehler.textContent = 'Bitte geben Sie das Passwort ein.'; fehler.hidden = false; return; }
+      if (!feldEl.value) { fehler.textContent = 'Fehler: Bitte geben Sie das Passwort ein.'; fehler.hidden = false; return; }
       knopf.disabled = true;
       knopf.textContent = 'Prüfe Passwort …';
       fehler.hidden = true;
@@ -310,8 +288,9 @@
       }).then(function () {
         appStarten();
       }).catch(function (err) {
-        fehler.textContent = err.message;
+        fehler.textContent = 'Fehler: ' + err.message;
         fehler.hidden = false;
+        feldEl.setAttribute('aria-invalid', 'true');
         knopf.disabled = false;
         knopf.textContent = 'Anmelden';
         feldEl.select();
@@ -450,8 +429,8 @@
     var pfad = windowsPfad(roh);
     return '<div class="stapel" style="gap:10px">' +
       '<div style="display:flex;flex-wrap:wrap;gap:16px;align-items:center">' +
-      '<a class="link-akzent" href="' + esc(explorerUrl(roh)) + '" target="_blank" rel="noopener">' + icon('ordner') + esc(titel) + '</a>' +
-      '<button type="button" class="link-akzent" data-kopieren="' + esc(pfad) + '">' + icon('kopieren') + 'Pfad kopieren</button>' +
+      '<a class="link" href="' + esc(explorerUrl(roh)) + '" target="_blank" rel="noopener">' + icon('ordner') + esc(titel) + '</a>' +
+      '<button type="button" class="link" data-kopieren="' + esc(pfad) + '">' + icon('kopieren') + 'Pfad kopieren</button>' +
       '</div>' +
       '<div class="pfad">' + esc(pfad) + '</div>' +
       '<p class="klein-hinweis">Browser öffnen Ordner auf dem Netzlaufwerk oft nicht direkt. Kopieren Sie dann den Pfad und fügen Sie ihn in die Adresszeile des Windows-Explorers ein.</p>' +
@@ -467,7 +446,7 @@
     var el = document.createElement('div');
     el.className = 'toast' + (fehler ? ' fehler' : '');
     el.setAttribute('role', fehler ? 'alert' : 'status');
-    el.textContent = text;
+    el.innerHTML = icon(fehler ? 'fehler' : 'ok') + '<span>' + esc(text) + '</span>';
     huelle.appendChild(el);
     setTimeout(function () { el.remove(); }, fehler ? 6000 : 3000);
   }
@@ -481,7 +460,7 @@
         '<p>' + (opt.html || esc(opt.text)) + '</p>' +
         '<div class="aktionen">' +
         '<button type="button" class="knopf knopf-rahmen" data-antwort="nein">' + esc(opt.abbrechen || 'Abbrechen') + '</button>' +
-        '<button type="button" class="knopf ' + (opt.gefahr === false ? 'knopf-primaer' : 'knopf-gefahr-voll') + '" data-antwort="ja">' + esc(opt.ok || 'Löschen') + '</button>' +
+        '<button type="button" class="knopf ' + 'knopf-primaer' + '" data-antwort="ja">' + esc(opt.ok || 'Löschen') + '</button>' +
         '</div></div>';
       function schliessen(wert) {
         document.removeEventListener('keydown', taste);
@@ -656,7 +635,7 @@
     app.innerHTML =
       '<header class="kopf-mobil">' +
       '<button type="button" class="menue-knopf" id="menue-knopf" aria-label="Menü öffnen">' + icon('menue') + '</button>' +
-      '<span class="nav-logo"><img src="assets/ruv-logo.png" alt="R+V"></span>' +
+      '<span class="nav-logo"><img src="assets/logo-negativ.svg" alt="R+V"></span>' +
       '<span class="nav-titel" id="titel-mobil"></span>' +
       '</header>' +
       '<div class="abdunkler" id="abdunkler"></div>' +
@@ -699,13 +678,14 @@
     else status = { klasse: '', text: 'Gespeichert auf dem Server' };
     var dunkel = effektivesThema() === 'dark';
     nav.innerHTML =
-      '<div class="nav-marke"><span class="nav-logo"><img src="assets/ruv-logo.png" alt="R+V"></span>' +
+      '<div class="nav-marke"><span class="nav-logo"><img src="assets/logo-negativ.svg" alt="R+V"></span>' +
       '<span class="nav-titel">' + esc(titel) + '</span></div>' +
       '<nav class="nav-liste">' + NAV.map(function (n) {
         var aktiv = pfad.indexOf(n.pfad) === 0;
         return '<a class="nav-link" href="#' + n.pfad + '"' + (aktiv ? ' aria-current="page"' : '') + '>' + icon(n.icon) + '<span>' + n.text + '</span></a>';
       }).join('') + '</nav>' +
       '<div class="nav-fuss">' +
+      '<a class="nav-knopf" href="handbuch.html" target="_blank" rel="noopener">' + icon('hilfe') + '<span>Handbuch</span></a>' +
       '<a class="nav-status ' + status.klasse + '" href="#/einstellungen" style="text-decoration:none"><span class="punkt"></span>' + esc(status.text) + '</a>' +
       '<button type="button" class="nav-knopf" id="thema-knopf">' + icon(dunkel ? 'sonne' : 'mond') + '<span>' + (dunkel ? 'Helles Design' : 'Dunkles Design') + '</span></button>' +
       (store.anmeldungAktiv ? '<button type="button" class="nav-knopf" id="abmelde-knopf">' + icon('abmelden') + '<span>Abmelden</span></button>' : '') +
@@ -760,7 +740,7 @@
 
   function nichtGefunden(haupt, text, zurueck) {
     haupt.innerHTML = '<div class="leerzustand">' + icon('suche', 'icon-gross') + '<p>' + esc(text) + '</p>' +
-      '<a class="link-akzent" href="#' + zurueck + '">Zurück zur Liste</a></div>';
+      '<a class="link" href="#' + zurueck + '">Zurück zur Liste</a></div>';
   }
 
   function avatarHtml(p, klein) {
@@ -806,7 +786,7 @@
     var gruppen = OPTIONEN.gruppe.slice();
     store.daten.personas.forEach(function (p) { if (p.gruppe && gruppen.indexOf(p.gruppe) < 0) gruppen.push(p.gruppe); });
     haupt.innerHTML = hinweisBanner() +
-      '<div class="seitenkopf"><div><h1>Personas</h1><p id="personas-anzahl"></p></div>' +
+      '<div class="seitenkopf"><div><p class="topline">Lernwelt</p><h1>Personas</h1><p id="personas-anzahl"></p></div>' +
       '<a class="knopf knopf-primaer" href="#/personas/neu">' + icon('plus') + 'Neue Persona</a></div>' +
       '<div class="filterzeile">' +
       '<div class="suche">' + icon('suche') + '<input id="p-suche" type="search" placeholder="Persona suchen (Name, Funktion, Beruf, Ort …)" aria-label="Personas durchsuchen" value="' + esc(ui.personaSuche) + '"></div>' +
@@ -897,12 +877,12 @@
     haupt.innerHTML = hinweisBanner() +
       '<div class="leiste"><a class="knopf knopf-text" href="#/personas">' + icon('zurueck') + 'Zurück</a>' +
       '<div class="leiste-rechts"><a class="knopf knopf-primaer" href="#/personas/' + id + '/bearbeiten">' + icon('stift') + 'Bearbeiten</a>' +
-      '<button type="button" class="knopf knopf-gefahr" id="p-loeschen">' + icon('papierkorb') + 'Löschen</button></div></div>' +
+      '<button type="button" class="knopf knopf-rahmen" id="p-loeschen">' + icon('papierkorb') + 'Löschen</button></div></div>' +
       '<div class="stapel">' +
-      '<section class="karte"><div class="profil">' + portrait +
-      '<div class="profil-text"><h1>' + esc(vollerName(p)) + '</h1>' +
+      '<section class="karte profil-karte"><div class="profil">' + portrait +
+      '<div class="profil-text"><p class="topline">' + esc(p.gruppe || 'Persona') + '</p><h1>' + esc(vollerName(p)) + '</h1>' +
       '<div class="unterzeile">' + esc(p.funktion || '–') + (p.beruf ? ' · ' + esc(p.beruf) : '') + '</div>' +
-      '<div class="chips">' + (p.gruppe ? '<span class="chip">' + esc(p.gruppe) + '</span>' : '') +
+      '<div class="chips">' +
       (p.personaId ? '<span class="chip chip-grau">ID ' + esc(p.personaId) + '</span>' : '') +
       (p.cJourney ? '<span class="chip chip-grau">Customer Journey: ' + esc(p.cJourney) + '</span>' : '') + '</div>' +
       (fakten.length ? '<div class="profil-fakten">' + fakten.join('') + '</div>' : '') +
@@ -1030,7 +1010,7 @@
       '<form id="persona-form" novalidate>' +
       '<div class="leiste"><a class="knopf knopf-text" href="' + zurueck + '">' + icon('zurueck') + 'Zurück</a>' +
       '<button type="submit" class="knopf knopf-primaer">' + icon('speichern') + 'Speichern</button></div>' +
-      '<div class="seitenkopf"><div><h1>' + (id ? 'Persona bearbeiten' : 'Neue Persona') + '</h1>' +
+      '<div class="seitenkopf"><div><p class="topline">Personas</p><h1>' + (id ? 'Persona bearbeiten' : 'Neue Persona') + '</h1>' +
       (id ? '<p>' + esc(vollerName(bestehend)) + '</p>' : '') + '</div></div>' +
       '<div class="stapel">' +
       karte('Profilbild', 'person', '<div class="bild-bereich" id="bild-bereich"></div>') +
@@ -1081,7 +1061,7 @@
         '<label class="knopf knopf-rahmen" for="pf-bilddatei">' + icon('hochladen') + (vorschau ? 'Bild ändern' : 'Bild auswählen') + '</label>' +
         '<input id="pf-bilddatei" type="file" accept="image/jpeg,image/png,image/webp" hidden>' +
         (zustand.bildGross || zustand.bild ? '<button type="button" class="knopf knopf-rahmen" id="pf-bild-ausschnitt">' + icon('zuschnitt') + 'Ausschnitt anpassen</button>' : '') +
-        (vorschau ? '<button type="button" class="knopf knopf-gefahr" id="pf-bild-loeschen">' + icon('x') + 'Bild löschen</button>' : '') +
+        (vorschau ? '<button type="button" class="knopf knopf-rahmen" id="pf-bild-loeschen">' + icon('x') + 'Bild löschen</button>' : '') +
         '</div>';
       document.getElementById('pf-bilddatei').addEventListener('change', function (e) {
         var datei = e.target.files && e.target.files[0];
@@ -1223,7 +1203,7 @@
   // ------------------------------------------------------------------
   function seiteFirmen(haupt) {
     haupt.innerHTML = hinweisBanner() +
-      '<div class="seitenkopf"><div><h1>Firmen</h1><p id="firmen-anzahl"></p></div>' +
+      '<div class="seitenkopf"><div><p class="topline">Lernwelt</p><h1>Firmen</h1><p id="firmen-anzahl"></p></div>' +
       '<a class="knopf knopf-primaer" href="#/firmen/neu">' + icon('plus') + 'Neue Firma</a></div>' +
       '<div class="filterzeile"><div class="suche">' + icon('suche') +
       '<input id="f-suche" type="search" placeholder="Suche nach Name, Branche oder Ort …" aria-label="Firmen durchsuchen" value="' + esc(ui.firmaSuche) + '"></div></div>' +
@@ -1259,11 +1239,11 @@
     haupt.innerHTML = hinweisBanner() +
       '<div class="leiste"><a class="knopf knopf-text" href="#/firmen">' + icon('zurueck') + 'Zurück</a>' +
       '<div class="leiste-rechts"><a class="knopf knopf-primaer" href="#/firmen/' + id + '/bearbeiten">' + icon('stift') + 'Bearbeiten</a>' +
-      '<button type="button" class="knopf knopf-gefahr" id="f-loeschen">' + icon('papierkorb') + 'Löschen</button></div></div>' +
+      '<button type="button" class="knopf knopf-rahmen" id="f-loeschen">' + icon('papierkorb') + 'Löschen</button></div></div>' +
       '<div class="stapel">' +
-      '<section class="karte"><div class="profil"><span class="avatar" style="border-radius:12px">' + icon('firma') + '</span>' +
-      '<div class="profil-text"><h1>' + esc(f.name) + '</h1>' +
-      '<div class="chips">' + (f.funktion ? '<span class="chip">' + esc(f.funktion) + '</span>' : '') +
+      '<section class="karte profil-karte"><div class="profil"><span class="avatar avatar-eckig">' + icon('firma') + '</span>' +
+      '<div class="profil-text"><p class="topline">' + esc(f.funktion && f.funktion !== 'keine Angabe' ? f.funktion : 'Firma') + '</p><h1>' + esc(f.name) + '</h1>' +
+      '<div class="chips">' + (f.branche ? '<span class="chip">' + esc(f.branche) + '</span>' : '') +
       (f.firmenId ? '<span class="chip chip-grau">ID ' + esc(f.firmenId) + '</span>' : '') + '</div></div></div></section>' +
       '<div class="raster-karten">' +
       karte('Firmendaten', 'firma', feldListe([feld('Funktion', f.funktion), feld('Branche', f.branche), feld('Adresse', adresse), feld('Sonstiges', f.sonstiges)])) +
@@ -1296,7 +1276,7 @@
       '<form id="firma-form" novalidate>' +
       '<div class="leiste"><a class="knopf knopf-text" href="' + zurueck + '">' + icon('zurueck') + 'Zurück</a>' +
       '<button type="submit" class="knopf knopf-primaer">' + icon('speichern') + 'Speichern</button></div>' +
-      '<div class="seitenkopf"><div><h1>' + (id ? 'Firma bearbeiten' : 'Neue Firma') + '</h1></div></div>' +
+      '<div class="seitenkopf"><div><p class="topline">Firmen</p><h1>' + (id ? 'Firma bearbeiten' : 'Neue Firma') + '</h1></div></div>' +
       '<div class="stapel">' +
       karte('Firmendaten', 'firma', '<div class="raster raster-2">' +
         eingabe('ff-name', 'Name *', f.name, 'text', ' required autocomplete="off"') +
@@ -1392,7 +1372,7 @@
 
   function seiteFormate(haupt) {
     haupt.innerHTML = hinweisBanner() +
-      '<div class="seitenkopf"><div><h1>E-Learning-Formate</h1><p id="formate-anzahl"></p></div>' +
+      '<div class="seitenkopf"><div><p class="topline">Lernwelt</p><h1>E-Learning-Formate</h1><p id="formate-anzahl"></p></div>' +
       '<a class="knopf knopf-primaer" href="#/formate/neu">' + icon('plus') + 'Neues Format</a></div>' +
       '<div class="filterzeile"><div class="suche">' + icon('suche') +
       '<input id="fo-suche" type="search" placeholder="Suche nach Name oder Mediengestalter …" aria-label="Formate durchsuchen" value="' + esc(ui.formatSuche) + '"></div>' +
@@ -1410,7 +1390,7 @@
       if (!liste.length) {
         ziel.innerHTML = '<div class="leerzustand">' + icon('buch', 'icon-gross') + '<p>' +
           (store.daten.formate.length ? 'Keine Formate gefunden.' : 'Noch keine E-Learning-Formate angelegt.') + '</p>' +
-          (store.daten.formate.length ? '' : '<a class="link-akzent" href="#/formate/neu">' + icon('plus', 'icon-klein') + 'Erstes Format anlegen</a>') + '</div>';
+          (store.daten.formate.length ? '' : '<a class="link" href="#/formate/neu">' + icon('plus', 'icon-klein') + 'Erstes Format anlegen</a>') + '</div>';
         return;
       }
       ziel.innerHTML = '<div class="kacheln-breit">' + liste.map(function (f) {
@@ -1433,16 +1413,16 @@
     haupt.innerHTML = hinweisBanner() +
       '<div class="leiste"><a class="knopf knopf-text" href="#/formate">' + icon('zurueck') + 'Zurück</a>' +
       '<div class="leiste-rechts"><a class="knopf knopf-primaer" href="#/formate/' + id + '/bearbeiten">' + icon('stift') + 'Bearbeiten</a>' +
-      '<button type="button" class="knopf knopf-gefahr" id="fo-loeschen">' + icon('papierkorb') + 'Löschen</button></div></div>' +
+      '<button type="button" class="knopf knopf-rahmen" id="fo-loeschen">' + icon('papierkorb') + 'Löschen</button></div></div>' +
       '<div class="stapel">' +
-      '<section class="karte"><div class="profil"><span class="avatar" style="border-radius:12px">' + icon(formatIcon(f.formatTyp)) + '</span>' +
-      '<div class="profil-text"><h1>' + esc(f.name) + '</h1><div class="chips"><span class="chip">' + esc(f.formatTyp) + '</span>' +
+      '<section class="karte profil-karte"><div class="profil"><span class="avatar avatar-eckig">' + icon(formatIcon(f.formatTyp)) + '</span>' +
+      '<div class="profil-text"><p class="topline">' + esc(f.formatTyp) + '</p><h1>' + esc(f.name) + '</h1><div class="chips">' +
       '<span class="chip chip-grau">ID ' + formatNummer(f.formatId) + '</span></div></div></div></section>' +
       '<div class="raster-karten">' +
       karte('Formatdaten', 'buch', '<div class="stapel" style="gap:16px">' + feldListe([
         feld('ID', formatNummer(f.formatId)), feld('Format', f.formatTyp), feld('Medienentwickler', f.medienentwickler)]) +
         (f.link ? '<div><div class="felder"><dt>Datei-Link</dt></div>' + dateiLinkBlock(f.link, 'Im Explorer öffnen') + '</div>' : '') +
-        (f.httpLink ? '<div class="felder"><dt>HTTP-Link</dt><dd><a class="link-akzent" href="' + esc(f.httpLink) + '" target="_blank" rel="noopener">' + icon('extern') + esc(f.httpLink) + '</a></dd></div>' : '') +
+        (f.httpLink ? '<div class="felder"><dt>HTTP-Link</dt><dd><a class="link" href="' + esc(f.httpLink) + '" target="_blank" rel="noopener">' + icon('extern') + esc(f.httpLink) + '</a></dd></div>' : '') +
         '</div>') +
       karte('Zugewiesene Personas (' + personen.length + ')', 'personen', personen.length ? '<div class="liste">' + personen.map(function (p) {
         return '<div class="eintrag"><a class="eintrag-link" href="#/personas/' + p.id + '">' + avatarHtml(p, true) +
@@ -1470,7 +1450,7 @@
       '<form id="format-form" novalidate>' +
       '<div class="leiste"><a class="knopf knopf-text" href="' + zurueck + '">' + icon('zurueck') + 'Zurück</a>' +
       '<button type="submit" class="knopf knopf-primaer">' + icon('speichern') + 'Speichern</button></div>' +
-      '<div class="seitenkopf"><div><h1>' + (id ? 'Format bearbeiten' : 'Neues Format') + '</h1></div></div>' +
+      '<div class="seitenkopf"><div><p class="topline">E-Learning-Formate</p><h1>' + (id ? 'Format bearbeiten' : 'Neues Format') + '</h1></div></div>' +
       '<div class="stapel">' +
       karte('Formatdaten', 'buch', '<div class="raster raster-2">' +
         eingabe('fo-name', 'Name *', f.name, 'text', ' required autocomplete="off"') +
@@ -1558,7 +1538,7 @@
         '</span></div><span class="chip' + (store.anmeldungAktiv ? '' : ' chip-warnung') + '">' + (store.anmeldungAktiv ? 'Aktiv' : 'Aus') + '</span></div>' +
         '<div><button type="button" class="knopf knopf-rahmen" id="e-abfrage">' + icon('schloss') +
         (store.anmeldungAktiv ? 'Passwortabfrage deaktivieren' : 'Passwortabfrage aktivieren') + '</button></div>' +
-        '<form id="e-passwort" class="stapel" style="gap:12px;border-top:1px solid var(--linie);padding-top:16px" novalidate>' +
+        '<form id="e-passwort" class="stapel" style="gap:12px;border-top:1px solid var(--border);padding-top:16px" novalidate>' +
         '<strong>Passwort ändern</strong>' +
         '<div class="feld"><label for="e-pw-alt">Aktuelles Passwort</label><input id="e-pw-alt" type="password" autocomplete="current-password"></div>' +
         '<div class="feld"><label for="e-pw-neu">Neues Passwort</label><input id="e-pw-neu" type="password" autocomplete="new-password"><span class="hilfe">Mindestens 8 Zeichen.</span></div>' +
@@ -1569,12 +1549,15 @@
         '</div>';
     }
     haupt.innerHTML = hinweisBanner() +
-      '<div class="seitenkopf"><div><h1>Einstellungen</h1><p>Anwendungstitel, Anmeldung und Datenhaltung</p></div></div>' +
+      '<div class="seitenkopf"><div><p class="topline">System</p><h1>Einstellungen</h1><p>Anwendungstitel, Anmeldung und Datenhaltung</p></div></div>' +
       '<div class="raster-karten">' +
       karte('Anwendung', 'einstellungen', '<form id="e-form" class="stapel" style="gap:16px" novalidate>' +
         eingabe('e-titel', 'Titel der Anwendung', d.einstellungen.appTitel) +
         '<div><button type="submit" class="knopf knopf-primaer">' + icon('speichern') + 'Titel speichern</button></div></form>') +
       karte('Anmeldung & Passwort', 'schloss', anmeldungHtml) +
+      karte('Hilfe', 'hilfe', '<div class="stapel" style="gap:16px"><p style="margin:0">Das Handbuch erklärt alle Funktionen Schritt für Schritt, von der Anmeldung bis zur Datensicherung.</p>' +
+        '<div style="display:flex;flex-wrap:wrap;gap:8px"><a class="knopf knopf-rahmen" href="handbuch.html" target="_blank" rel="noopener">' + icon('buch') + 'Handbuch öffnen</a>' +
+        '<a class="knopf knopf-rahmen" href="handbuch.pdf" download>' + icon('herunterladen') + 'Handbuch als PDF</a></div></div>') +
       karte('Datenhaltung', 'datenbank', '<div class="stapel" style="gap:16px">' + modusText +
         '<dl class="felder">' + feld('Personas / Firmen / Formate', d.personas.length + ' / ' + d.firmen.length + ' / ' + d.formate.length) +
         feld('Zuletzt gespeichert', datumText(d.geaendertAm)) + feld('Revision', store.basisRevision) + '</dl>' +
@@ -1606,7 +1589,7 @@
       var fehler = document.getElementById('e-pw-fehler');
       var knopf = document.getElementById('e-pw-knopf');
       var alt = wert('e-pw-alt'), neu = wert('e-pw-neu'), neu2 = wert('e-pw-neu2');
-      function zeigeFehler(text) { fehler.textContent = text; fehler.hidden = false; }
+      function zeigeFehler(text) { fehler.textContent = 'Fehler: ' + text; fehler.hidden = false; }
       fehler.hidden = true;
       if (!alt) return zeigeFehler('Bitte geben Sie das aktuelle Passwort ein.');
       if (neu.length < 8) return zeigeFehler('Das neue Passwort muss mindestens 8 Zeichen lang sein.');

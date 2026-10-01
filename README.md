@@ -8,13 +8,15 @@ Nachbau der Abacus-App (`Persona_Datenverwaltung_Tool.zip`) für den IIS: **ohne
 | Ordner / Datei | Zweck |
 |---|---|
 | `webapp/` | Die komplette Anwendung. Dieser Ordner wird auf den IIS kopiert. |
-| `webapp/index.html`, `webapp/assets/` | Oberfläche (HTML, CSS, JavaScript), R+V-Logo |
+| `webapp/index.html`, `webapp/assets/` | Oberfläche (HTML, CSS, JavaScript), Hausschriften, Iconfont und Logos aus „R+V Design“ |
+| `webapp/handbuch.html`, `webapp/handbuch.pdf`, `webapp/handbuch/` | Handbuch als Webseite und PDF, in der App unter „Handbuch“ verlinkt |
 | `webapp/api/daten.ashx` | Server-Teil (ASP.NET 4.x): Anmeldung, Laden, Speichern, Bilder |
 | `webapp/App_Data/lernwelt.json` | Alle Daten: Personas, Firmen, Beziehungen, Formate, Einstellungen |
 | `webapp/App_Data/bilder/` | Profilbilder (`<AccessID>.jpg` Hochformat, `<AccessID>_q.jpg` quadratisch) |
 | `webapp/App_Data/anmeldung.json` | Passwort-Schlüssel und Einstellung der Passwortabfrage (entsteht beim ersten Aufruf) |
 | `webapp/web.config` | IIS-Einstellungen (Startseite, MIME-Typen) |
 | `tools/migration/` | Skripte für die Übernahme aus Access |
+| `tools/handbuch/` | Testserver sowie Build der Handbuch-Bilder und des PDFs (`bash tools/handbuch/bauen.sh`) |
 | `tools/build_artifact.py` | Baut eine einzelne HTML-Datei als Vorschau (Artifact) |
 
 Der IIS liefert den Ordner `App_Data` grundsätzlich nicht aus. Die Daten sind deshalb nur über `api/daten.ashx` erreichbar, und nur nach der Anmeldung.
@@ -30,7 +32,9 @@ Voraussetzung ist **ASP.NET 4.x** (Server-Manager → Rollen und Features → *W
 
 Fehlen die Schreibrechte, zeigt die App oben einen Hinweis. Lesen funktioniert dann, Speichern nicht.
 
-**Bei Updates** der Anwendung den Ordner `App_Data` auf dem Server nicht überschreiben, sonst gehen Daten und Passwort verloren. Es genügt, `index.html`, `assets/`, `api/` und `web.config` zu ersetzen.
+**Bei Updates** der Anwendung den Ordner `App_Data` auf dem Server nicht überschreiben, sonst gehen Daten und Passwort verloren. Es genügt, `index.html`, `handbuch.html`, `handbuch.pdf`, `handbuch/`, `assets/`, `api/` und `web.config` zu ersetzen.
+
+Das ausführliche Handbuch für Redaktion und Administration steht in der Anwendung unter **Handbuch** und als `webapp/handbuch.pdf`.
 
 ### Speichern
 

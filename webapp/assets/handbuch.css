@@ -1,0 +1,85 @@
+/* Handbuch der Persona-Datenbank. Baut auf den Tokens aus app.css auf. */
+
+.hb-kopf { background: var(--primary); color: var(--white); padding: var(--space-5) var(--space-3); }
+.hb-kopf-innen { max-width: 1120px; margin: 0 auto; display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3) var(--space-5); }
+.hb-logo { height: 96px; width: auto; margin: -20px -16px -20px -28px; }
+.hb-kopf-text { flex: 1 1 360px; min-width: 0; }
+.hb-kopf .topline { color: var(--orange-light); }
+.hb-kopf h1 { font-size: 40px; line-height: 1.1; font-weight: 700; }
+.hb-stand { margin-top: var(--space-2); color: rgba(255, 255, 255, 0.82); font-size: 14px; }
+.hb-aktionen { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.hb-kopf .knopf-primaer { background: var(--mint-light); color: var(--primary); }
+.hb-kopf .knopf-primaer:hover { background: #2ee6e6; }
+.hb-knopf-hell { background: transparent; color: var(--white); border-color: var(--white); }
+.hb-knopf-hell:hover { background: var(--white); color: var(--primary); }
+
+.hb-rahmen { max-width: 1120px; margin: 0 auto; padding: var(--space-6) var(--space-3); display: grid; grid-template-columns: 240px minmax(0, 1fr); gap: var(--space-6); align-items: start; }
+.hb-inhalt { position: sticky; top: var(--space-4); border: 1px solid var(--border); border-radius: var(--radius-base); padding: var(--space-3); }
+.hb-inhalt-titel { font: 700 18px/1.3 var(--font-slab); color: var(--highlight); margin-bottom: var(--space-2); }
+.hb-inhalt ol { margin: 0; padding-left: 30px; display: flex; flex-direction: column; gap: 6px; font-size: 15px; line-height: 21px; }
+.hb-inhalt a { color: var(--ink); text-decoration: none; }
+.hb-inhalt a:hover { text-decoration: underline; }
+
+.hb-text { min-width: 0; max-width: 72ch; }
+.hb-text section { padding-bottom: var(--space-6); margin-bottom: var(--space-6); border-bottom: 1px solid var(--border); scroll-margin-top: var(--space-4); }
+.hb-text section:last-child { border-bottom: 0; }
+.hb-text h2 { font-size: 32px; line-height: 1.15; font-weight: 700; margin-bottom: var(--space-3); }
+.hb-text h3 { font-size: 20px; line-height: 1.2; font-weight: 700; margin: var(--space-4) 0 var(--space-2); }
+.hb-text p, .hb-text ul, .hb-text ol, .hb-text dl { margin: 0 0 var(--space-3); }
+.hb-text ul, .hb-text ol { padding-left: 24px; }
+.hb-text li { margin-bottom: 6px; }
+.hb-text a { color: var(--link); }
+.hb-text code { font-family: Consolas, "Courier New", monospace; font-size: 14px; background: var(--surface-soft); border: 1px solid var(--border); border-radius: var(--radius-base); padding: 0 4px; overflow-wrap: anywhere; }
+
+.hb-schritte { counter-reset: schritt; list-style: none; padding-left: 0 !important; }
+.hb-schritte li { counter-increment: schritt; position: relative; padding-left: 40px; min-height: 28px; }
+.hb-schritte li::before { content: counter(schritt); position: absolute; left: 0; top: -2px; width: 28px; height: 28px; border-radius: 50%; background: var(--interactive); color: var(--on-interactive); font-weight: 700; font-size: 15px; display: flex; align-items: center; justify-content: center; }
+
+.hb-begriffe { display: grid; grid-template-columns: minmax(140px, max-content) minmax(0, 1fr); gap: var(--space-2) var(--space-3); }
+.hb-begriffe dt { font-weight: 700; }
+.hb-begriffe dd { margin: 0; }
+@media (max-width: 640px) { .hb-begriffe { grid-template-columns: minmax(0, 1fr); gap: 2px; } .hb-begriffe dd { margin-bottom: var(--space-2); } }
+
+.hb-hinweis { background: var(--surface-soft); border: 1px solid var(--border); border-radius: var(--radius-base); padding: 12px var(--space-3); }
+
+.hb-text figure { margin: var(--space-3) 0 var(--space-4); }
+.hb-text figure img { display: block; width: 100%; height: auto; border: 1px solid var(--border); border-radius: var(--radius-base); background: var(--white); }
+.hb-text figcaption { font-size: 14px; line-height: 20px; color: var(--ink-muted); margin-top: var(--space-2); }
+.hb-text .hb-schmal { max-width: 280px; }
+
+.hb-faq dt { font-weight: 700; margin-top: var(--space-3); }
+.hb-faq dd { margin: 4px 0 0; }
+
+.hb-fuss { border-top: 1px solid var(--border); padding: var(--space-4) var(--space-3); text-align: center; color: var(--ink-muted); font-size: 14px; }
+
+@media (max-width: 900px) {
+  .hb-rahmen { grid-template-columns: minmax(0, 1fr); gap: var(--space-4); padding-top: var(--space-4); }
+  .hb-inhalt { position: static; }
+  .hb-kopf h1 { font-size: 30px; }
+}
+
+/* Druck und PDF: hell, ohne Bedienelemente, Kapitel auf neuer Seite */
+@page { size: A4; margin: 18mm 16mm 20mm; }
+@media print {
+  :root, :root[data-theme="dark"] {
+    --surface: #ffffff; --surface-soft: #fff4e0; --ink: #001957; --ink-muted: #707070;
+    --highlight: #eb6504; --interactive: #109da8; --on-interactive: #001957; --link: #167b8a; --border: #c7c7c7;
+    color-scheme: light;
+  }
+  body { font-size: 11pt; line-height: 1.45; }
+  .hb-aktionen { display: none; }
+  .hb-kopf { padding: 14mm 10mm; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .hb-kopf h1 { font-size: 26pt; }
+  .hb-rahmen { display: block; padding: 0; max-width: none; }
+  .hb-inhalt { position: static; border: 0; padding: 10mm 0 0; break-after: page; }
+  .hb-inhalt ol { font-size: 12pt; line-height: 1.6; }
+  .hb-text { max-width: none; }
+  .hb-text section { break-before: page; border-bottom: 0; margin: 0; padding: 0; }
+  .hb-text h2 { font-size: 22pt; }
+  .hb-text a { color: inherit; text-decoration: none; }
+  .hb-text figure { break-inside: avoid; }
+  .hb-text figure img { max-height: 115mm; width: auto; max-width: 100%; }
+  .hb-text .hb-schmal img { max-height: 120mm; }
+  .hb-schritte li::before, .hb-hinweis, .hb-text code { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .hb-fuss { display: none; }
+}

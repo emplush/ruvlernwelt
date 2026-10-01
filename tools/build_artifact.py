@@ -29,10 +29,12 @@ def main(ziel):
                 p[feld] = data_uri(os.path.join(WEBAPP, "App_Data", wert), "image/jpeg")
 
     css = open(os.path.join(WEBAPP, "assets", "app.css"), encoding="utf-8").read()
+    for datei in os.listdir(os.path.join(WEBAPP, "assets", "fonts")):
+        css = css.replace(f'url("fonts/{datei}")', 'url("' + data_uri(os.path.join(WEBAPP, "assets", "fonts", datei), "font/woff2") + '")')
     js = (open(os.path.join(WEBAPP, "assets", "krypto.js"), encoding="utf-8").read() + "\n" +
           open(os.path.join(WEBAPP, "assets", "app.js"), encoding="utf-8").read())
-    logo = data_uri(os.path.join(WEBAPP, "assets", "ruv-logo.png"), "image/png")
-    js = js.replace("assets/ruv-logo.png", logo)
+    for logo in ("logo-negativ.svg", "logo-claim-positiv.svg"):
+        js = js.replace("assets/" + logo, data_uri(os.path.join(WEBAPP, "assets", logo), "image/svg+xml"))
     daten_json = json.dumps(daten, ensure_ascii=False).replace("</", "<\\/")
 
     html = (
