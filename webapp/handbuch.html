@@ -36,6 +36,7 @@
       <li><a href="#persona-ansehen">Eine Persona ansehen</a></li>
       <li><a href="#persona-bearbeiten">Personas anlegen und bearbeiten</a></li>
       <li><a href="#profilbild">Profilbild hochladen</a></li>
+      <li><a href="#galerie">Galerie</a></li>
       <li><a href="#familie">Familienbeziehungen</a></li>
       <li><a href="#firmen">Firmen</a></li>
       <li><a href="#formate">E-Learning-Formate</a></li>
@@ -54,7 +55,7 @@
     <section id="ueberblick">
       <p class="topline">Kapitel 1</p>
       <h2>Überblick und Rollen</h2>
-      <p>Die Persona-Datenbank sammelt die Figuren, die in den E-Learning-Formaten der Lernwelt auftreten: Kundinnen und Kunden, Mitarbeitende im Innen- und Außendienst, Bankberater und ihre Firmen. Wer ein neues Format plant, findet hier Lebenslauf, Charakter, Wohnsituation, Familie, Bildmaterial und Stimme jeder Persona an einem Ort.</p>
+      <p>Die Persona-Datenbank sammelt die Figuren, die in den E-Learning-Formaten der Lernwelt auftreten: Kundinnen und Kunden, Mitarbeitende im Innen- und Außendienst, Bankberater und ihre Firmen. Wer ein neues Format plant, findet hier Lebenslauf, Charakter, Wohnsituation, Familie, Stimme und in der Galerie das Bildmaterial jeder Persona an einem Ort.</p>
       <dl class="hb-begriffe">
         <dt>Personas</dt><dd>Die Figuren mit allen Angaben, ihrem Profilbild und ihren Beziehungen untereinander.</dd>
         <dt>Firmen</dt><dd>Unternehmen und Betriebe, denen Personas angehören, zum Beispiel als Inhaberin oder Geschäftsführer.</dd>
@@ -67,6 +68,8 @@
           <tr><th scope="row">Personas, Firmen, Formate ansehen</th><td>ja</td><td>ja</td><td>ja</td><td>ja</td></tr>
           <tr><th scope="row">Versionen ansehen</th><td>ja</td><td>ja</td><td>ja</td><td>ja</td></tr>
           <tr><th scope="row">Anlegen, bearbeiten, löschen, Versionen wiederherstellen</th><td>ja</td><td>ja</td><td>–</td><td>–</td></tr>
+          <tr><th scope="row">Galerie ansehen und Bilder herunterladen</th><td>ja</td><td>ja</td><td>ja</td><td>ja</td></tr>
+          <tr><th scope="row">Galerie: Bilder hochladen, beschreiben, löschen</th><td>ja</td><td>ja</td><td>ja</td><td>–</td></tr>
           <tr><th scope="row">Benutzerliste ansehen</th><td>ja</td><td>ja</td><td>–</td><td>–</td></tr>
           <tr><th scope="row">Personen einladen</th><td>alle Rollen</td><td>nur Nutzer</td><td>–</td><td>–</td></tr>
           <tr><th scope="row">Konten bearbeiten, deaktivieren, löschen</th><td>ja</td><td>–</td><td>–</td><td>–</td></tr>
@@ -74,7 +77,7 @@
           <tr><th scope="row">Eigenes Konto (Name, Passwort, E-Mail)</th><td>ja</td><td>ja</td><td>ja</td><td>ja</td></tr>
         </tbody>
       </table></div>
-      <p>Designer und Nutzer haben derzeit dieselben Rechte. Die Unterscheidung folgt später.</p>
+      <p>Designer dürfen zusätzlich zu Nutzern Bilder in die Galerie einer Persona hochladen und dort löschen. Weitere Unterschiede folgen später.</p>
     </section>
 
     <section id="anmelden">
@@ -142,10 +145,8 @@
       <p class="topline">Kapitel 6</p>
       <h2>Eine Persona ansehen</h2>
       <figure><img src="handbuch/detail.jpg" alt="Detailseite einer Persona mit Bild, Kopfbereich und Abschnitten" loading="lazy"><figcaption>Die Detailseite einer Persona</figcaption></figure>
-      <p>Oben stehen Bild, Gruppe, Name, Funktion, Beruf, die wichtigsten Eckdaten und <b>„Zuletzt geändert am … von …“</b>. Darunter folgen die Abschnitte <i>Persönliche Daten</i>, <i>Kontakt &amp; Wohnen</i>, <i>Beruf &amp; Rolle</i>, <i>Biografie</i>, <i>Familie</i>, <i>Persönlichkeit</i>, <i>Firmenzugehörigkeit</i>, <i>Voiceover &amp; Avatar</i>, <i>Links &amp; Medien</i> und <i>E-Learning-Formate</i>.</p>
-      <p>Die Knöpfe <b>Bearbeiten</b> und <b>Löschen</b> sehen nur Administration und Mediengestaltung. <b>Versionen</b> sehen alle (siehe <a href="#versionen">Kapitel 12</a>).</p>
-      <h3>Bildordner öffnen</h3>
-      <p>Unter <b>Links &amp; Medien</b> steht der Ordner mit dem Bildmaterial auf dem Netzlaufwerk. <b>Pfad kopieren</b> legt den Pfad in die Zwischenablage; fügen Sie ihn in die Adresszeile des Windows-Explorers ein. Der direkte Link funktioniert nur, wenn Ihr Browser das zulässt.</p>
+      <p>Oben stehen Bild, Gruppe, Name, Funktion, Beruf, die wichtigsten Eckdaten und <b>„Zuletzt geändert am … von …“</b>. Darunter folgen die Abschnitte <i>Persönliche Daten</i>, <i>Kontakt &amp; Wohnen</i>, <i>Beruf &amp; Rolle</i>, <i>Biografie</i>, <i>Familie</i>, <i>Persönlichkeit</i>, <i>Firmenzugehörigkeit</i>, <i>Voiceover &amp; Avatar</i> und <i>E-Learning-Formate</i>. Ganz unten folgt die <a href="#galerie">Galerie</a>; der Knopf <b>Galerie</b> im Kopfbereich springt direkt dorthin und zeigt die Anzahl der Bilder.</p>
+      <p>Die Knöpfe <b>Bearbeiten</b> und <b>Löschen</b> sehen nur Administration und Mediengestaltung. <b>Versionen</b> sehen alle (siehe <a href="#versionen">Kapitel 13</a>).</p>
     </section>
 
     <section id="persona-bearbeiten">
@@ -180,10 +181,46 @@
         <li>Wählen Sie <b>Ausschnitt übernehmen</b> und anschließend <b>Speichern</b>.</li>
       </ol>
       <p>Mit <b>Ausschnitt anpassen</b> ändern Sie später nur den Kachel-Ausschnitt. <b>Bild löschen</b> entfernt das Bild; über die Versionen lässt es sich zurückholen.</p>
+      <p>Liegt das gewünschte Bild schon in der <a href="#galerie">Galerie</a>, öffnen Sie es dort und wählen <b>Als Profilbild</b>. Es folgt derselbe Zuschnitt; gespeichert wird sofort.</p>
+    </section>
+
+    <section id="galerie">
+      <p class="topline">Kapitel 9</p>
+      <h2>Galerie</h2>
+      <p>Jede Persona hat eine Galerie für ihr Bildmaterial, zum Beispiel Varianten, Szenen und Posen. Alle angemeldeten Personen sehen die Galerie und können Bilder herunterladen. Hochladen, beschreiben und löschen dürfen Designer, Mediengestaltung und Administration.</p>
+      <figure><img src="handbuch/galerie.jpg" alt="Galerie einer Persona mit Upload-Bereich, Auswahlleiste und Vorschaubildern" loading="lazy"><figcaption>Die Galerie unten auf der Detailseite</figcaption></figure>
+      <h3>Bilder hochladen</h3>
+      <ol class="hb-schritte">
+        <li>Öffnen Sie die Persona und scrollen Sie zur <b>Galerie</b> (oder wählen Sie oben den Knopf <b>Galerie</b>).</li>
+        <li>Ziehen Sie ein oder mehrere Bilder aus dem Explorer in den gestrichelten Bereich <b>Bilder hierher ziehen</b>. Alternativ klicken Sie in den Bereich und wählen die Dateien aus.</li>
+        <li>Die Bilder werden nacheinander hochgeladen; zu jeder Datei sehen Sie den Fortschritt und das Ergebnis.</li>
+      </ol>
+      <dl class="hb-begriffe">
+        <dt>Dateiarten</dt><dd>JPG, PNG, WebP und GIF, höchstens 20 MB je Bild. Andere Dateien werden mit „Fehler: …“ abgewiesen, die übrigen trotzdem hochgeladen.</dd>
+        <dt>Dateinamen</dt><dd>werden vereinheitlicht: Kleinbuchstaben, Umlaute ausgeschrieben, Leer- und Sonderzeichen als Bindestrich. Aus „Porträt Jürgen (Garten).JPG“ wird „portraet-juergen-garten.jpg“. Gibt es den Namen schon, wird „-2“, „-3“ … angehängt. Der ursprüngliche Name steht in der Großansicht.</dd>
+        <dt>Doppelte Bilder</dt><dd>Ist genau dieselbe Datei schon in der Galerie, wird sie nicht noch einmal gespeichert; die Liste zeigt „bereits in der Galerie“.</dd>
+        <dt>Originale</dt><dd>Die Bilder bleiben unverändert in voller Auflösung erhalten. Für die Übersicht entsteht zusätzlich ein kleines Vorschaubild.</dd>
+      </dl>
+      <h3>Ansehen und herunterladen</h3>
+      <figure><img src="handbuch/galerie-gross.jpg" alt="Großansicht eines Galerie-Bildes mit Knöpfen zum Herunterladen, als Profilbild verwenden und Löschen" loading="lazy"><figcaption>Die Großansicht</figcaption></figure>
+      <p>Ein Klick auf ein Vorschaubild öffnet die <b>Großansicht</b>. Mit den Pfeilen links und rechts, den Pfeiltasten oder durch Wischen blättern Sie durch die Galerie; <b>Esc</b> oder das Kreuz schließt sie. Unten stehen Größe in Pixeln und MB, Datum und wer das Bild hochgeladen hat.</p>
+      <ul>
+        <li><b>Herunterladen</b> speichert das Original.</li>
+        <li><b>Beschreibung hinzufügen</b> ergänzt einen kurzen Text, z. B. „Szene im Garten“.</li>
+        <li><b>Als Profilbild</b> (Administration und Mediengestaltung) übernimmt das Bild mit Zuschnitt als Profilbild der Persona.</li>
+        <li><b>Löschen</b> entfernt das Bild nach einer Rückfrage.</li>
+      </ul>
+      <h3>Mehrere Bilder auf einmal</h3>
+      <p>Setzen Sie die Häkchen oben links in den Vorschaubildern oder wählen Sie <b>Alle auswählen</b>. Dann:</p>
+      <ul>
+        <li><b>Auswahl herunterladen</b> lädt die Bilder als ein ZIP-Paket, z. B. <code>1004-ottmar-duering-bilder.zip</code>. Ein einzelnes ausgewähltes Bild kommt direkt als Datei.</li>
+        <li><b>Auswahl löschen</b> entfernt alle ausgewählten Bilder nach einer Rückfrage.</li>
+      </ul>
+      <p class="hb-hinweis"><b>Wichtig:</b> Gelöschte Galerie-Bilder lassen sich nicht wiederherstellen; sie sind nicht Teil der Versionen. Hochladen und Löschen stehen im Protokoll. Wird eine Persona gelöscht, bleibt ihre Galerie erhalten und ist nach dem Wiederherstellen wieder da.</p>
     </section>
 
     <section id="familie">
-      <p class="topline">Kapitel 9</p>
+      <p class="topline">Kapitel 10</p>
       <h2>Familienbeziehungen</h2>
       <p class="hb-rolle">Für Administration und Mediengestaltung</p>
       <figure><img src="handbuch/familie.jpg" alt="Abschnitt Familie mit Feldern für Person, Verhältnis und Gegenrichtung" loading="lazy"><figcaption>Eine Beziehung auf der Detailseite hinzufügen</figcaption></figure>
@@ -196,14 +233,14 @@
     </section>
 
     <section id="firmen">
-      <p class="topline">Kapitel 10</p>
+      <p class="topline">Kapitel 11</p>
       <h2>Firmen</h2>
       <figure><img src="handbuch/firmen.jpg" alt="Übersicht der Firmen als Kacheln" loading="lazy"><figcaption>Die Firmen-Übersicht</figcaption></figure>
       <p>Die Übersicht zeigt Name, Kundenart, Branche und die Anzahl zugeordneter Personas; die Suche durchsucht Name, Branche und Ort. Administration und Mediengestaltung legen über <b>Neue Firma</b> Firmen an. Pflicht ist nur der Name. Unter <b>Personas zuordnen</b> suchen Sie Personas und tragen ihre Funktion in der Firma ein.</p>
     </section>
 
     <section id="formate">
-      <p class="topline">Kapitel 11</p>
+      <p class="topline">Kapitel 12</p>
       <h2>E-Learning-Formate</h2>
       <figure><img src="handbuch/format.jpg" alt="Formular für ein E-Learning-Format mit Persona-Auswahl" loading="lazy"><figcaption>Ein Format anlegen und Personas zuweisen</figcaption></figure>
       <ol class="hb-schritte">
@@ -214,7 +251,7 @@
     </section>
 
     <section id="versionen">
-      <p class="topline">Kapitel 12</p>
+      <p class="topline">Kapitel 13</p>
       <h2>Versionen, Löschen, Wiederherstellen</h2>
       <figure><img src="handbuch/versionen.jpg" alt="Versionsseite mit Liste der Stände links und Vergleichstabelle rechts" loading="lazy"><figcaption>Versionen einer Persona vergleichen</figcaption></figure>
       <p>Jede Speicherung einer Persona, Firma oder eines Formats legt einen vollständigen Stand ab, inklusive Bild, Zuordnungen und Beziehungen.</p>
@@ -232,7 +269,7 @@
     </section>
 
     <section id="benutzer">
-      <p class="topline">Kapitel 13</p>
+      <p class="topline">Kapitel 14</p>
       <h2>Benutzerverwaltung</h2>
       <p class="hb-rolle">Ansehen und Nutzer einladen: Administration und Mediengestaltung. Bearbeiten, deaktivieren, löschen: Administration</p>
       <figure><img src="handbuch/benutzer.jpg" alt="Benutzerliste mit Name, Org-Einheit, Rolle, Status und letzter Anmeldung" loading="lazy"><figcaption>Die Benutzerliste</figcaption></figure>
@@ -258,7 +295,7 @@
     </section>
 
     <section id="einstellungen">
-      <p class="topline">Kapitel 14</p>
+      <p class="topline">Kapitel 15</p>
       <h2>Einstellungen</h2>
       <p class="hb-rolle">Nur für die Administration</p>
       <figure><img src="handbuch/einstellungen.jpg" alt="Einstellungen mit den Karten Anwendung, E-Mail-Versand und Datenhaltung" loading="lazy"><figcaption>Die Einstellungen</figcaption></figure>
@@ -275,30 +312,31 @@
       <h3>Weitere Einstellungen</h3>
       <ul>
         <li><b>Titel der Anwendung:</b> erscheint in der Navigation, auf der Anmeldeseite und im Browser-Tab.</li>
-        <li><b>Daten exportieren:</b> lädt alle Personas, Firmen, Formate, Zuordnungen und Bilder als JSON-Datei herunter (Sicherung).</li>
+        <li><b>Datenhaltung:</b> zeigt die Anzahl der Personas, Firmen und Formate sowie, wie viele Galerie-Bilder es gibt und wie viel Speicher sie belegen.</li>
+        <li><b>Daten exportieren:</b> lädt alle Personas, Firmen, Formate, Zuordnungen und Profilbilder als JSON-Datei herunter (Sicherung). Die Galerie-Bilder gehören nicht dazu (siehe <a href="#administration">Installation und Betrieb</a>).</li>
         <li><b>Daten importieren:</b> ersetzt den gesamten Datenbestand durch eine exportierte Datei. Die bisherigen Stände bleiben als Versionen erhalten.</li>
         <li><b>Gelöschte Einträge:</b> gelöschte Personas, Firmen und Formate mit einem Klick wiederherstellen.</li>
       </ul>
     </section>
 
     <section id="protokoll">
-      <p class="topline">Kapitel 15</p>
+      <p class="topline">Kapitel 16</p>
       <h2>Protokoll</h2>
       <p class="hb-rolle">Nur für die Administration</p>
       <figure><img src="handbuch/protokoll.jpg" alt="Protokoll als Tabelle mit Zeit, Person, Ereignis und IP-Adresse" loading="lazy"><figcaption>Das Protokoll</figcaption></figure>
-      <p>Das Protokoll hält fest, wer wann was getan hat: Anmeldungen und Fehlversuche, Einladungen, Änderungen an Konten, Anlegen, Ändern, Löschen und Wiederherstellen von Personas, Firmen und Formaten, Änderungen an den Einstellungen, Export und Import. Fehlversuche und Mail-Fehler sind mit <b>Achtung</b> markiert.</p>
+      <p>Das Protokoll hält fest, wer wann was getan hat: Anmeldungen und Fehlversuche, Einladungen, Änderungen an Konten, Anlegen, Ändern, Löschen und Wiederherstellen von Personas, Firmen und Formaten, Hochladen, Löschen und ZIP-Downloads in der Galerie, Änderungen an den Einstellungen, Export und Import. Fehlversuche und Mail-Fehler sind mit <b>Achtung</b> markiert.</p>
       <p>Filtern Sie nach Bereich oder suchen Sie nach Text oder Person. IP-Adressen werden nach 90 Tagen entfernt, Einträge nach 2 Jahren gelöscht.</p>
     </section>
 
     <section id="darstellung">
-      <p class="topline">Kapitel 16</p>
+      <p class="topline">Kapitel 17</p>
       <h2>Darstellung und Smartphone</h2>
       <figure class="hb-schmal"><img src="handbuch/mobil.jpg" alt="Personas-Übersicht auf einem Smartphone" loading="lazy"><figcaption>Auf dem Smartphone</figcaption></figure>
       <p>Die Anwendung folgt der Hell- oder Dunkel-Einstellung Ihres Systems. Mit <b>Dunkles Design</b> bzw. <b>Helles Design</b> unten in der Navigation wechseln Sie selbst. Auf Smartphone und Tablet öffnen Sie die Navigation über das Menüsymbol oben links.</p>
     </section>
 
     <section id="administration">
-      <p class="topline">Kapitel 17</p>
+      <p class="topline">Kapitel 18</p>
       <h2>Installation und Betrieb</h2>
       <p class="hb-rolle">Für die technische Betreuung</p>
       <p>Die Anwendung läuft bei ALL-INKL.COM (oder jedem anderen Webhosting) mit <b>PHP 8.1 oder neuer</b>, <b>MySQL 5.7+ oder MariaDB 10.3+</b> und <b>HTTPS</b>. Zusatzsoftware ist nicht nötig.</p>
@@ -312,6 +350,8 @@
         <li><b>Einrichtung:</b> Die Adresse im Browser öffnen. Die Seite <i>Erst-Einrichtung</i> erscheint. Einrichtungscode, Name, Org-Einheit und Passwort eingeben. Die Tabellen werden angelegt und die Startdaten (52 Personas, 9 Firmen, 27 Bilder) übernommen.</li>
         <li><b>E-Mail:</b> Unter <i>Einstellungen → E-Mail-Versand</i> das Postfach <code>info@ruv-lernwelt.de</code> eintragen und eine Test-E-Mail senden.</li>
         <li><b>Cronjob (empfohlen):</b> Im KAS unter <i>Tools → Cronjobs</i> einmal täglich die Adresse <code>https://…/api/index.php?r=wartung&amp;schluessel=…</code> aufrufen lassen. Ohne Cronjob läuft die Wartung beim ersten Seitenaufruf des Tages.</li>
+        <li><b>Hochladen erlauben:</b> Die Datei <code>api/.user.ini</code> erlaubt Uploads bis 20 MB je Bild. Greift sie nicht (Fehler „größer, als der Server annimmt“), im KAS unter <i>PHP-Einstellungen</i> <code>upload_max_filesize</code> auf mindestens 21M und <code>post_max_size</code> auf 24M setzen.</li>
+        <li><b>Galerie-Ordner:</b> Die Galerie-Bilder liegen als Dateien in <code>daten/galerie</code> (per <code>.htaccess</code> gesperrt, nur nach Anmeldung abrufbar). Besser ist ein Ordner außerhalb des Web-Verzeichnisses: dafür in der Konfiguration <code>galerie_ordner</code> setzen, z. B. <code>/www/htdocs/w0123456/lernwelt-galerie</code>.</li>
         <li><b>Aufräumen:</b> Nach der Einrichtung den Ordner <code>einrichtung/startdaten</code> löschen. Er ist zwar gesperrt, wird aber nicht mehr gebraucht.</li>
       </ol>
       <h3>Sicherheit</h3>
@@ -319,18 +359,18 @@
         <li>Passwörter werden mit Argon2id gespeichert, Links in E-Mails nur als Prüfsumme. Das SMTP-Passwort liegt verschlüsselt in der Datenbank.</li>
         <li>Anmeldungen laufen über ein sicheres Cookie (<code>Secure</code>, <code>HttpOnly</code>, <code>SameSite=Strict</code>); Änderungen sind zusätzlich gegen Anfragen fremder Seiten geschützt.</li>
         <li>Die Datei <code>.htaccess</code> erzwingt HTTPS, setzt Sicherheits-Header (u. a. HSTS und Content-Security-Policy) und sperrt <code>lib/</code>, <code>einrichtung/</code> und die Konfiguration.</li>
-        <li>Profilbilder liegen in der Datenbank und sind nur nach Anmeldung abrufbar.</li>
+        <li>Profilbilder liegen in der Datenbank, Galerie-Bilder im gesperrten Galerie-Ordner. Beide sind nur nach Anmeldung abrufbar. Hochgeladene Dateien werden auf echten Bildinhalt geprüft und unter einem Zufallsnamen gespeichert.</li>
       </ul>
       <h3>Sicherung und Updates</h3>
       <ul>
-        <li><b>Datensicherung:</b> ALL-INKL sichert Datenbanken täglich. Zusätzlich empfiehlt sich regelmäßig <i>Einstellungen → Daten exportieren</i>.</li>
-        <li><b>Update der Anwendung:</b> alle Dateien außer der Konfigurationsdatei ersetzen. Die Daten liegen in der Datenbank und bleiben erhalten.</li>
+        <li><b>Datensicherung:</b> ALL-INKL sichert Datenbanken und Webspace täglich. Zusätzlich empfiehlt sich regelmäßig <i>Einstellungen → Daten exportieren</i> und, für die Galerie, eine Kopie des Galerie-Ordners per FTP.</li>
+        <li><b>Update der Anwendung:</b> alle Dateien außer der Konfigurationsdatei und dem Ordner <code>daten/</code> (Galerie) ersetzen. Die übrigen Daten liegen in der Datenbank und bleiben erhalten; neue Tabellen legt die Anwendung beim ersten Aufruf selbst an.</li>
         <li><b>Den <code>schluessel</code> nie ändern</b>, sonst muss das SMTP-Passwort neu eingegeben werden.</li>
       </ul>
     </section>
 
     <section id="fragen">
-      <p class="topline">Kapitel 18</p>
+      <p class="topline">Kapitel 19</p>
       <h2>Fragen und Probleme</h2>
       <dl class="hb-faq">
         <dt>„Die Anwendung konnte nicht gestartet werden.“</dt>
@@ -345,6 +385,8 @@
         <dd>Einladungen gelten 7 Tage, Links zum Zurücksetzen eine Stunde, jeder Link nur einmal. Lassen Sie sich einen neuen Link schicken.</dd>
         <dt>„Eintrag wurde inzwischen geändert“.</dt>
         <dd>Jemand anderes hat gespeichert, während Sie bearbeitet haben. Laden Sie die aktuellen Daten und wiederholen Sie Ihre Änderung.</dd>
+        <dt>Ein Bild lässt sich nicht hochladen.</dt>
+        <dd>Erlaubt sind JPG, PNG, WebP und GIF bis 20 MB. Andere Formate (z. B. TIFF, PSD, HEIC vom iPhone) vorher als JPG oder PNG speichern. Meldet der Server „größer, als der Server annimmt“, siehe <a href="#administration">Installation</a>.</dd>
         <dt>Der einzige Administrator kommt nicht mehr ins Konto.</dt>
         <dd>„Passwort vergessen“ nutzen. Funktioniert auch der Mailversand nicht, hilft die technische Betreuung über die Datenbank. Vorbeugend am besten zwei Administratoren einrichten.</dd>
       </dl>

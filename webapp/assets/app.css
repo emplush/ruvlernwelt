@@ -439,3 +439,67 @@ input[type="range"] { width: 100%; accent-color: var(--interactive); }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { transition: none !important; animation: none !important; }
 }
+
+/* Galerie */
+.chip-knopf { display: inline-flex; align-items: center; gap: 6px; cursor: pointer; border-color: var(--interactive); font-family: inherit; }
+.chip-knopf:hover, .profil-karte .chip-knopf:hover { background: var(--interactive); color: var(--on-interactive); }
+.profil-karte .chip-knopf { border-color: var(--interactive); }
+.galerie { margin-top: var(--space-4); }
+.galerie-upload { border: 2px dashed var(--border); border-radius: var(--radius-base); padding: var(--space-4) var(--space-3); text-align: center; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: var(--space-2); margin-bottom: var(--space-3); }
+.galerie-upload p { margin: 0; }
+.galerie-upload .icon { color: var(--interactive); }
+.galerie-upload:hover, .galerie-upload.ziehen { border-color: var(--interactive); background: var(--surface-soft); }
+.galerie-upload:focus-visible { outline: 3px solid var(--highlight); outline-offset: 2px; }
+.galerie-fortschritt { border: 1px solid var(--border); border-radius: var(--radius-base); padding: 12px var(--space-3); margin-bottom: var(--space-3); }
+.galerie-fortschritt ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-2); }
+.galerie-fortschritt li { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr); gap: 4px var(--space-3); align-items: center; font-size: 14px; line-height: 20px; }
+.galerie-fortschritt li > :nth-child(n+3) { grid-column: 2; }
+.galerie-fortschritt-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 700; }
+.galerie-fortschritt progress { width: 100%; height: 8px; accent-color: var(--interactive); }
+.galerie-fortschritt-ok { display: inline-flex; align-items: center; gap: 6px; color: var(--ink); }
+.galerie-fortschritt-ok .icon { color: var(--success); }
+.galerie-fortschritt-fazit { margin: var(--space-2) 0 0; font-size: 14px; }
+.formfehler { color: var(--ink); font-weight: 700; display: flex; gap: 6px; }
+.formfehler::before { content: "\e902"; font-family: var(--font-icons); font-weight: 400; color: var(--error); }
+.galerie-leiste { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2) var(--space-3); margin-bottom: var(--space-3); }
+.galerie-leiste-knoepfe { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-left: auto; }
+.auswahl-alle { display: inline-flex; align-items: center; gap: var(--space-2); font-weight: 700; font-size: 14px; cursor: pointer; }
+.auswahl-alle input, .galerie-check input { width: 18px; height: 18px; accent-color: var(--interactive); margin: 0; }
+.galerie-raster { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: var(--space-3); }
+.galerie-kachel { position: relative; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.galerie-bild { display: block; width: 100%; aspect-ratio: 1; padding: 0; border: 1px solid var(--border); border-radius: var(--radius-base); background: var(--grey-1); cursor: zoom-in; overflow: hidden; }
+.galerie-bild img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.galerie-bild:hover { border-color: var(--ink); box-shadow: inset 0 0 0 1px var(--ink); }
+.galerie-kachel.ausgewaehlt .galerie-bild { border: 3px solid var(--interactive); }
+.galerie-check { position: absolute; top: 6px; left: 6px; background: var(--surface); border: 1px solid var(--grey-3); border-radius: var(--radius-base); width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+.galerie-name { font-size: 14px; line-height: 20px; font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-top: 4px; }
+.galerie-meta { font-size: 12px; line-height: 16px; color: var(--ink-muted); }
+@media (max-width: 640px) { .galerie-raster { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; } .galerie-leiste-knoepfe { margin-left: 0; } .galerie-fortschritt li { grid-template-columns: minmax(0, 1fr); } .galerie-fortschritt li > :nth-child(n+3) { grid-column: 1; } }
+
+/* Großansicht (Leuchtkasten): immer dunkelblau, unabhängig vom Farbschema */
+.ohne-scrollen { overflow: hidden; }
+.leuchtkasten { position: fixed; inset: 0; z-index: 55; background: var(--primary); color: var(--white); display: grid; grid-template-rows: auto minmax(0, 1fr) auto; }
+.leuchtkasten-kopf { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-2) var(--space-3); padding: 12px var(--space-3); border-bottom: 1px solid rgba(255, 255, 255, 0.16); }
+.leuchtkasten-titel { display: flex; flex-direction: column; min-width: 0; }
+.leuchtkasten-titel strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.leuchtkasten-titel span { font-size: 14px; color: rgba(255, 255, 255, 0.82); }
+.leuchtkasten-knoepfe { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); }
+.leuchtkasten .knopf-primaer { background: var(--mint-light); color: var(--primary); }
+.leuchtkasten .knopf-primaer:hover { background: #2ee6e6; }
+.knopf-hell { background: transparent; color: var(--white); border-color: var(--white); }
+.knopf-hell:hover { background: var(--white); color: var(--primary); }
+.leuchtkasten-zu { color: var(--white); }
+.leuchtkasten-zu:hover { color: var(--white); border-color: var(--white); }
+.leuchtkasten-buehne { position: relative; display: flex; align-items: center; justify-content: center; padding: var(--space-3) 64px; min-height: 0; touch-action: pan-y; }
+.leuchtkasten-buehne img { max-width: 100%; max-height: 100%; object-fit: contain; background: var(--white); user-select: none; -webkit-user-drag: none; }
+.leuchtkasten-pfeil { position: absolute; top: 50%; transform: translateY(-50%); left: var(--space-2); width: 44px; height: 44px; border-radius: var(--radius-base); border: 2px solid var(--white); background: var(--primary); color: var(--white); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 22px; }
+.leuchtkasten-pfeil.rechts { left: auto; right: var(--space-2); }
+.leuchtkasten-pfeil:hover { background: var(--white); color: var(--primary); }
+.leuchtkasten-info { padding: 12px var(--space-3) var(--space-3); border-top: 1px solid rgba(255, 255, 255, 0.16); font-size: 14px; line-height: 20px; color: rgba(255, 255, 255, 0.82); }
+.leuchtkasten-info p { margin: 0 0 6px; }
+.leuchtkasten-text { color: var(--white); font-size: 16px; line-height: 22px; }
+.leuchtkasten .link { color: var(--mint-light); }
+.leuchtkasten-form { display: flex; flex-wrap: wrap; gap: var(--space-2); align-items: center; }
+.leuchtkasten-form input { flex: 1 1 260px; background: var(--white); color: var(--primary); border-color: var(--white); }
+.leuchtkasten :focus-visible { outline: 3px solid var(--orange-light); outline-offset: 2px; }
+@media (max-width: 640px) { .leuchtkasten-buehne { padding: var(--space-2); } .leuchtkasten-pfeil { top: auto; bottom: var(--space-2); transform: none; } }

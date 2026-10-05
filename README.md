@@ -16,6 +16,8 @@ Zugang über persönliche Benutzerkonten mit Rollen; neue Personen kommen per Ei
 | `webapp/einrichtung/` | Datenbankschema (`schema.sql`) und Startdaten aus Access (`startdaten/`), die bei der Einrichtung übernommen werden |
 | `webapp/konfiguration.beispiel.php` | Vorlage für die Konfiguration (Datenbank, Schlüssel, Einrichtungscode) |
 | `webapp/.htaccess` | HTTPS-Umleitung, Sicherheits-Header (CSP, HSTS), Zugriffssperren |
+| `webapp/daten/` | Galerie-Bilder (`daten/galerie/<persona>/`), per `.htaccess` gesperrt; alternativ Ordner außerhalb des Webs (`galerie_ordner`) |
+| `webapp/api/.user.ini` | PHP-Grenzen für Uploads bis 20 MB |
 | `tools/test/` | Testumgebung (`test_starten.sh`), API-Test (`api_test.py`), Browser-Test (`ui_test.js`) |
 | `tools/handbuch/` | Build der Handbuch-Bilder und des PDFs (`bash tools/handbuch/bauen.sh`) |
 | `tools/build_artifact.py` | Baut eine einzelne HTML-Datei als Vorschau (nur lesend) |
@@ -35,7 +37,9 @@ Die ausführliche Anleitung mit Bildern steht im Handbuch, Kapitel „Installati
 5. Unter **Einstellungen → E-Mail-Versand** das Postfach eintragen (z. B. `info@ruv-lernwelt.de`, Server aus dem KAS, Port 465, SSL/TLS) und eine Test-E-Mail senden.
 6. Im KAS einen **Cronjob** (täglich) auf `https://<adresse>/api/index.php?r=wartung&schluessel=<cron_schluessel>` anlegen. Ohne Cronjob läuft die Wartung beim ersten Aufruf des Tages.
 
-**Bei Updates** nur die Programmdateien ersetzen (`index.html`, `handbuch*`, `assets/`, `api/`, `lib/`, `einrichtung/schema.sql`, `.htaccess`). Die Konfigurationsdatei bleibt, die Daten liegen in der Datenbank.
+**Bei Updates** nur die Programmdateien ersetzen (`index.html`, `handbuch*`, `assets/`, `api/`, `lib/`, `einrichtung/schema.sql`, `.htaccess`). Die Konfigurationsdatei und der Ordner `daten/` (Galerie) bleiben, alles andere liegt in der Datenbank. Neue Tabellen legt die Anwendung beim ersten Aufruf selbst an (`SCHEMA_VERSION` in `lib/einrichtung.php`).
+
+Uploads bis 20 MB erlaubt `api/.user.ini`. Greift sie nicht, im KAS unter PHP-Einstellungen `upload_max_filesize = 21M` und `post_max_size = 24M` setzen.
 
 ## Rollen
 
@@ -43,6 +47,8 @@ Die ausführliche Anleitung mit Bildern steht im Handbuch, Kapitel „Installati
 |---|---|---|---|---|
 | Personas, Firmen, Formate ansehen | ja | ja | ja | ja |
 | … anlegen, bearbeiten, löschen, Versionen wiederherstellen | ja | ja | – | – |
+| Galerie ansehen, Bilder herunterladen (einzeln, ZIP) | ja | ja | ja | ja |
+| Galerie: Bilder hochladen, beschreiben, löschen | ja | ja | ja | – |
 | Benutzerliste ansehen | ja | ja (nur lesen) | – | – |
 | Personen einladen | alle Rollen | nur Rolle Nutzer | – | – |
 | Konten bearbeiten, deaktivieren, löschen | ja | – | – | – |
@@ -67,7 +73,8 @@ Die Rechte prüft der Server bei jeder Anfrage; die Oberfläche blendet nur aus,
 
 - Jede Änderung legt eine **Version** an; ältere Stände lassen sich vergleichen und wiederherstellen, gelöschte Einträge unter Einstellungen zurückholen.
 - Speichern zwei Personen gleichzeitig denselben Eintrag, lehnt der Server die zweite Änderung ab und zeigt den Konflikt an.
-- **Export/Import** (Einstellungen) als JSON-Datei mit eingebetteten Bildern.
+- **Galerie** je Persona: Bilder (JPG, PNG, WebP, GIF, bis 20 MB) per Drag & Drop hochladen; Dateinamen werden bereinigt, doppelte Dateien erkannt, Originale unverändert gespeichert, Vorschaubilder im Browser (Ersatz: GD auf dem Server) erzeugt. Großansicht mit Blättern, Download einzeln oder als ZIP, Beschreibung, „Als Profilbild“. Gespeichert unter Zufallsnamen, nur nach Anmeldung abrufbar; Hochladen, Löschen und ZIP-Downloads stehen im Protokoll.
+- **Export/Import** (Einstellungen) als JSON-Datei mit eingebetteten Profilbildern; die Galerie-Bilder sichert man über den Galerie-Ordner (FTP/Backup des Hosters).
 - Regelmäßige Sicherungen der Datenbank bietet der KAS (Datenbank → Backup) bzw. das Backup des Hosters.
 
 ## Entwicklung und Tests

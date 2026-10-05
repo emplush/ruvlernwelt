@@ -102,6 +102,40 @@ function link(an, art) {
   await familie.scrollIntoViewIfNeeded();
   await foto(p, 'familie.jpg', familie);
 
+  // Galerie: Varianten des Profilbilds per Drag & Drop hochladen
+  await p.goto(URL + '#/personas/1'); await p.waitForSelector('#gal-upload');
+  await p.click('#bez-abbrechen').catch(() => {});
+  const varianten = await p.evaluateHandle(async () => {
+    const quelle = document.querySelector('.portrait img').src;
+    const img = await new Promise((ok, fehler) => { const i = new Image(); i.onload = () => ok(i); i.onerror = fehler; i.src = quelle; });
+    const dt = new DataTransfer();
+    const machen = async (name, typ, malen, b, h) => {
+      const c = document.createElement('canvas'); c.width = b; c.height = h; malen(c.getContext('2d'), b, h);
+      const blob = await new Promise(r => c.toBlob(r, typ, 0.9));
+      dt.items.add(new File([blob], name, { type: typ }));
+    };
+    const w = img.naturalWidth, hh = img.naturalHeight;
+    await machen('Ottmar Düring – Porträt.jpg', 'image/jpeg', (x) => x.drawImage(img, 0, 0), w, hh);
+    await machen('Ottmar gespiegelt.jpg', 'image/jpeg', (x, b) => { x.translate(b, 0); x.scale(-1, 1); x.drawImage(img, 0, 0); }, w, hh);
+    await machen('Ottmar Nahaufnahme.jpg', 'image/jpeg', (x, b, h) => x.drawImage(img, w * 0.2, 0, w * 0.6, w * 0.6, 0, 0, b, h), 600, 600);
+    await machen('Ottmar Hintergrund Sand.png', 'image/png', (x, b, h) => { x.fillStyle = '#fff4e0'; x.fillRect(0, 0, b, h); x.globalCompositeOperation = 'multiply'; x.drawImage(img, (b - w) / 2, h - hh); }, 1200, hh);
+    await machen('Ottmar Hintergrund Mint.png', 'image/png', (x, b, h) => { x.fillStyle = '#00dcdc'; x.fillRect(0, 0, b, h); x.globalCompositeOperation = 'multiply'; x.drawImage(img, (b - w) / 2, h - hh); }, 1200, hh);
+    return dt;
+  });
+  await p.dispatchEvent('#gal-upload', 'dragenter', { dataTransfer: varianten });
+  await p.dispatchEvent('#gal-upload', 'drop', { dataTransfer: varianten });
+  await p.waitForSelector('#gal-fazit:has-text("5 Bilder hochgeladen")', { timeout: 30000 });
+  await p.check('[data-gal-wahl] >> nth=1'); await p.check('[data-gal-wahl] >> nth=3');
+  const galerie = p.locator('#galerie');
+  await galerie.scrollIntoViewIfNeeded();
+  await foto(p, 'galerie.jpg', galerie);
+  await p.click('[data-gal-oeffnen="4"]'); await p.waitForSelector('.leuchtkasten img');
+  await p.click('[data-lk="beschreiben"]'); await p.fill('#lk-text', 'Porträt in voller Größe, Standardpose');
+  await p.click('#lk-form button[type=submit]'); await p.waitForSelector('.leuchtkasten-text');
+  await p.waitForSelector('.toast', { state: 'detached' });
+  await foto(p, 'galerie-gross.jpg');
+  await p.keyboard.press('Escape');
+
   await p.goto(URL + '#/firmen'); await p.waitForSelector('.kachel-breit');
   await foto(p, 'firmen.jpg');
 

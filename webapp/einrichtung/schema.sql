@@ -186,3 +186,24 @@ CREATE TABLE IF NOT EXISTS protokoll (
   KEY ix_protokoll_zeit (zeit),
   KEY ix_protokoll_benutzer (benutzer_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Galerie: hochgeladene Bilder je Persona. Die Dateien liegen im Galerie-Ordner (siehe lib/galerie.php).
+CREATE TABLE IF NOT EXISTS galerie (
+  id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  persona_id INT UNSIGNED NOT NULL,
+  dateiname VARCHAR(150) NOT NULL,
+  original_name VARCHAR(255) NOT NULL DEFAULT '',
+  speichername VARCHAR(80) NOT NULL,
+  hat_vorschau TINYINT(1) NOT NULL DEFAULT 0,
+  mime VARCHAR(40) NOT NULL,
+  groesse INT UNSIGNED NOT NULL,
+  breite INT UNSIGNED NOT NULL,
+  hoehe INT UNSIGNED NOT NULL,
+  sha256 CHAR(64) NOT NULL,
+  beschreibung VARCHAR(500) NULL,
+  hochgeladen_am DATETIME NOT NULL,
+  hochgeladen_von INT UNSIGNED NULL,
+  hochgeladen_von_name VARCHAR(201) NOT NULL DEFAULT '',
+  UNIQUE KEY uk_galerie_name (persona_id, dateiname),
+  KEY ix_galerie_hash (persona_id, sha256)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

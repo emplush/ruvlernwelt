@@ -1,0 +1,2 @@
+# Hochgeladene Dateien (Galerie) nie direkt ausliefern, nur über api/index.php
+Require all denied

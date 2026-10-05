@@ -7,6 +7,7 @@ require $lib . '/basis.php';
 require $lib . '/konten.php';
 require $lib . '/mail.php';
 require $lib . '/daten.php';
+require $lib . '/galerie.php';
 require $lib . '/benutzer.php';
 require $lib . '/wartung.php';
 require $lib . '/einrichtung.php';
@@ -35,6 +36,12 @@ const ROUTEN = [
     'versionen' => ['GET', false],
     'wiederherstellen' => ['POST', false],
     'geloescht' => ['GET', false],
+    'galerie' => ['GET', false],
+    'galerie-datei' => ['GET', false],
+    'galerie-zip' => ['GET', false],
+    'galerie-hochladen' => ['POST', false],
+    'galerie-loeschen' => ['POST', false],
+    'galerie-beschreibung' => ['POST', false],
     'konto' => ['POST', false],
     'passwort-aendern' => ['POST', false],
     'email-aendern' => ['POST', false],
@@ -84,13 +91,15 @@ function datenBearbeiter(): array
 
 function ausfuehren(string $route)
 {
-    $e = $_SERVER['REQUEST_METHOD'] === 'POST' ? eingabe() : [];
+    // Hochladen kommt als multipart/form-data, alles andere als JSON
+    $e = $_SERVER['REQUEST_METHOD'] === 'POST' && $route !== 'galerie-hochladen' ? eingabe() : [];
     switch ($route) {
         case 'status':
             $status = einrichtungStatus();
             if (!$status['eingerichtet']) {
                 return $status;
             }
+            schemaAktualisieren();
             if (wartungFaellig()) {
                 try {
                     wartung();
@@ -155,6 +164,24 @@ function ausfuehren(string $route)
         case 'geloescht':
             rechtePruefen(angemeldet(), 'einstellungen');
             return ['eintraege' => geloeschteListe()];
+
+        case 'galerie':
+            angemeldet();
+            return ['bilder' => galerieListe((int)($_GET['persona'] ?? 0))];
+        case 'galerie-datei':
+            angemeldet();
+            galerieDateiAusliefern((int)($_GET['id'] ?? 0), (string)($_GET['art'] ?? ''));
+            return null;
+        case 'galerie-zip':
+            angemeldet();
+            galerieZip((int)($_GET['persona'] ?? 0), (string)($_GET['ids'] ?? ''));
+            return null;
+        case 'galerie-hochladen':
+            return ['bild' => galerieHochladen((int)($_POST['persona'] ?? 0), angemeldet())];
+        case 'galerie-loeschen':
+            return ['geloescht' => galerieLoeschen(is_array($e['ids'] ?? null) ? $e['ids'] : [], angemeldet()), 'anzahl' => galerieAnzahlen()];
+        case 'galerie-beschreibung':
+            return ['bild' => galerieBeschreiben((int)($e['id'] ?? 0), text($e, 'beschreibung', 500), angemeldet())];
 
         case 'konto':
             return ['ich' => kontoSpeichern($e)];

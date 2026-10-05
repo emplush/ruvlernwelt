@@ -10,9 +10,9 @@ const ROLLEN = [
 ];
 
 const RECHTE = [
-    'admin' => ['daten_bearbeiten', 'benutzer_sehen', 'benutzer_einladen', 'benutzer_verwalten', 'einstellungen', 'protokoll'],
-    'mediengestalter' => ['daten_bearbeiten', 'benutzer_sehen', 'benutzer_einladen'],
-    'designer' => [],
+    'admin' => ['daten_bearbeiten', 'galerie_bearbeiten', 'benutzer_sehen', 'benutzer_einladen', 'benutzer_verwalten', 'einstellungen', 'protokoll'],
+    'mediengestalter' => ['daten_bearbeiten', 'galerie_bearbeiten', 'benutzer_sehen', 'benutzer_einladen'],
+    'designer' => ['galerie_bearbeiten'],
     'nutzer' => [],
 ];
 

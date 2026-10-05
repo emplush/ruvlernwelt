@@ -89,8 +89,10 @@ function zeileNachJson(array $z, array $felder): array
 function datenbestand(): array
 {
     $personas = [];
+    $galerie = galerieAnzahlen();
     foreach (abfrage('SELECT * FROM personas ORDER BY name, vorname')->fetchAll() as $z) {
         $p = zeileNachJson($z, PERSONA_FELDER);
+        $p['galerieAnzahl'] = $galerie[(int)$z['id']] ?? 0;
         $p['bild'] = bildUrl($z['bild_id']);
         $p['bildGross'] = bildUrl($z['bild_gross_id']);
         $personas[] = $p;

@@ -32,6 +32,10 @@ return [
     // Schlüssel für den täglichen Cronjob: https://…/api/index.php?r=wartung&schluessel=…
     'cron_schluessel' => 'HIER-EIN-WEITERER-ZUFALLSTEXT',
 
+    // Ordner für die Galerie-Bilder. Leer lassen = webapp/daten/galerie (per .htaccess gesperrt).
+    // Besser außerhalb des Web-Verzeichnisses, z. B. '/www/htdocs/w0123456/lernwelt-galerie'.
+    'galerie_ordner' => '',
+
     // Neue Passwörter gegen bekannte Datenlecks prüfen (Have I Been Pwned, k-Anonymität)
     'hibp' => true,
 ];

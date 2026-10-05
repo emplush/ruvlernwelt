@@ -20,6 +20,17 @@ function schemaAnlegen(): void
     }
 }
 
+// Bei neuen Tabellen erhöhen; bestehende Datenbanken werden beim nächsten Aufruf ergänzt.
+const SCHEMA_VERSION = 2;
+
+function schemaAktualisieren(): void
+{
+    if ((int)einstellung('schema_version', '1') < SCHEMA_VERSION) {
+        schemaAnlegen();
+        einstellungSetzen('schema_version', (string)SCHEMA_VERSION);
+    }
+}
+
 function einrichtungStatus(): array
 {
     return ['eingerichtet' => eingerichtet(), 'ersterAdmin' => (string)konfiguration()['erster_admin']];
@@ -32,6 +43,7 @@ function einrichten(array $e): array
     }
     $code = (string)konfiguration()['einrichtungs_code'];
     schemaAnlegen();
+    einstellungSetzen('schema_version', (string)SCHEMA_VERSION);
     drosseln('einrichten:' . ip(), 10, 3600, 'Zu viele Versuche. Bitte versuchen Sie es in einer Stunde erneut.');
     if ($code === '' || !hash_equals($code, (string)($e['code'] ?? ''))) {
         drosselungMerken('einrichten:' . ip());
@@ -83,6 +95,7 @@ function einstellungenLesen(): array
             'passwortGesetzt' => $s['passwort'] !== '',
         ],
         'mailEingerichtet' => mailEingerichtet(),
+        'galerie' => galerieStatistik(),
     ];
 }
 

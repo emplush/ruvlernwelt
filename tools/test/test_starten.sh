@@ -30,7 +30,7 @@ return [
 ];
 EOF
 : > "$ZIEL/mails.jsonl"
-php -S "127.0.0.1:$PORT" -t "$ZIEL/webapp" > "$ZIEL/php.log" 2>&1 &
+php -d upload_max_filesize=21M -d post_max_size=24M -S "127.0.0.1:$PORT" -t "$ZIEL/webapp" > "$ZIEL/php.log" 2>&1 &
 echo $! > "$ZIEL/php.pid"
 sleep 1
 echo "Testserver läuft: http://127.0.0.1:$PORT/ (PID $(cat "$ZIEL/php.pid"), Mails in $ZIEL/mails.jsonl)"

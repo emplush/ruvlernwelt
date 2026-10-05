@@ -33,7 +33,7 @@
     datenbank: 'e932', video: 'e9cb', kopfhoerer: 'e9a4', monitor: 'e954', abmelden: 'e98e',
     schloss: 'e956', hilfe: 'e904', fehler: 'e902', info: 'e900', ok: 'e984',
     uhr: 'e942', gruppe: 'e92b', liste: 'e955', mail: 'e95a', senden: 'e95e', auge: 'e994',
-    wiederherstellen: 'e96d', schild: 'e922'
+    wiederherstellen: 'e96d', schild: 'e922', bild: 'e996', weiter: 'e97a', haken: 'e941', zip: 'e953'
   };
 
   function icon(name, extraKlasse) {
@@ -239,10 +239,10 @@
   }
 
   function knopfWarten(knopf, text) {
-    var alt = knopf.textContent;
+    var alt = knopf.innerHTML;
     knopf.disabled = true;
     knopf.textContent = text;
-    return function () { knopf.disabled = false; knopf.textContent = alt; };
+    return function () { knopf.disabled = false; knopf.innerHTML = alt; };
   }
 
   function passwortFelder(prefix, neu) {
@@ -734,6 +734,9 @@
       app.classList.remove('nav-offen');
       gehe(a.getAttribute('href').slice(1));
     });
+    // Daneben fallen gelassene Dateien nicht im Browser öffnen (würde die App verlassen)
+    window.addEventListener('dragover', function (e) { if (hatDateien(e)) e.preventDefault(); });
+    window.addEventListener('drop', function (e) { if (hatDateien(e)) e.preventDefault(); });
     window.addEventListener('hashchange', function () {
       if (TOKEN_ROUTEN.test(rohPfad()) || !store.daten) return oeffentlichRouten();
       ui.pfad = aktuellerPfad();
@@ -977,7 +980,7 @@
         return '<a class="kachel" href="#/personas/' + p.id + '">' + avatarHtml(p) +
           '<span class="kachel-name">' + esc(vollerName(p)) + '</span>' +
           '<span class="kachel-sub">' + esc(p.funktion || '–') + '</span>' +
-          (p.personaId ? '<span class="kachel-id">ID ' + esc(p.personaId) + '</span>' : '') +
+          (p.personaId || p.galerieAnzahl ? '<span class="kachel-id">' + [p.personaId ? 'ID ' + esc(p.personaId) : '', p.galerieAnzahl ? p.galerieAnzahl + (p.galerieAnzahl === 1 ? ' Bild' : ' Bilder') : ''].filter(Boolean).join(' · ') + '</span>' : '') +
           (p.gruppe ? '<span class="chip">' + esc(p.gruppe) + '</span>' : '') +
           '</a>';
       }).join('') + '</div>';
@@ -987,6 +990,442 @@
     document.getElementById('p-gruppe').addEventListener('change', function (e) { ui.personaGruppe = e.target.value; aktualisieren(); });
     document.getElementById('p-kundenprofil').addEventListener('change', function (e) { ui.personaKundenprofil = e.target.value; aktualisieren(); });
     aktualisieren();
+  }
+
+  // ------------------------------------------------------------------
+  // Galerie je Persona: hochladen (Drag & Drop), ansehen, herunterladen (einzeln/ZIP), löschen
+  // ------------------------------------------------------------------
+  var GALERIE = {
+    typen: ['image/jpeg', 'image/png', 'image/webp', 'image/gif'],
+    maxBytes: 20 * 1024 * 1024,
+    vorschauKante: 480
+  };
+
+  function groesseText(bytes) {
+    if (!bytes) return '0 KB';
+    if (bytes >= 1024 * 1024) return (bytes / 1024 / 1024).toLocaleString('de-DE', { maximumFractionDigits: 1 }) + ' MB';
+    return Math.max(1, Math.round(bytes / 1024)).toLocaleString('de-DE') + ' KB';
+  }
+
+  function anzahlBilder(n) { return n + (n === 1 ? ' Bild' : ' Bilder'); }
+
+  function galerieKarte() {
+    var inhalt = store.modus === 'vorschau'
+      ? '<p class="leer">Die Galerie mit hochgeladenen Bildern gibt es in der installierten Anwendung.</p>'
+      : '<div id="galerie-inhalt"><div class="laden" role="status">Galerie wird geladen …</div></div>';
+    return '<section class="karte galerie" id="galerie"><div class="karte-kopf"><h2>' + icon('bild') + 'Galerie</h2>' +
+      '<span class="klein-hinweis" id="gal-zaehler"></span></div>' + inhalt + '</section>';
+  }
+
+  function galerieAnbinden(p) {
+    var ziel = document.getElementById('galerie-inhalt');
+    if (!ziel) return;
+    var darf = recht('galerie_bearbeiten');
+    var bilder = [];
+    var auswahl = {};
+
+    ziel.innerHTML = (darf
+      ? '<div class="galerie-upload" id="gal-upload" role="button" tabindex="0" aria-describedby="gal-upload-hinweis">' +
+        icon('hochladen', 'icon-gross') +
+        '<p><strong>Bilder hierher ziehen</strong> oder <span class="link">Dateien auswählen</span></p>' +
+        '<p class="klein-hinweis" id="gal-upload-hinweis">JPG, PNG, WebP oder GIF, höchstens 20 MB je Bild. Dateinamen werden vereinheitlicht (z. B. „Szene Küche.JPG“ → „szene-kueche.jpg“).</p>' +
+        '<input type="file" id="gal-datei" multiple accept="' + GALERIE.typen.join(',') + '" hidden></div>' +
+        '<div id="gal-fortschritt"></div>'
+      : '') +
+      '<div id="gal-liste"><div class="laden" role="status">Galerie wird geladen …</div></div>';
+
+    function laden() {
+      return api('galerie', undefined, '&persona=' + p.id).then(function (j) {
+        bilder = j.bilder;
+        zeichnen();
+      }).catch(function (e) {
+        var liste = document.getElementById('gal-liste');
+        if (liste && !e.abgemeldet) liste.innerHTML = '<p class="leer">' + esc(e.message) + '</p>';
+      });
+    }
+
+    function anzahlMerken() {
+      p.galerieAnzahl = bilder.length;
+      var z = document.getElementById('gal-zaehler');
+      if (z) z.textContent = bilder.length ? anzahlBilder(bilder.length) : '';
+      var chip = document.getElementById('zur-galerie');
+      if (chip) chip.innerHTML = icon('bild', 'icon-klein') + 'Galerie' + (bilder.length ? ' (' + bilder.length + ')' : '');
+    }
+
+    function gewaehlt() { return bilder.filter(function (b) { return auswahl[b.id]; }); }
+
+    function zeichnen() {
+      var liste = document.getElementById('gal-liste');
+      if (!liste) return;
+      anzahlMerken();
+      Object.keys(auswahl).forEach(function (k) { if (!bilder.some(function (b) { return String(b.id) === k; })) delete auswahl[k]; });
+      if (!bilder.length) {
+        liste.innerHTML = '<p class="leer">Noch keine Bilder in der Galerie.' + (darf ? '' : ' Bilder hochladen können Designer, Mediengestalter und die Administration.') + '</p>';
+        return;
+      }
+      liste.innerHTML =
+        '<div class="galerie-leiste">' +
+        '<label class="auswahl-alle"><input type="checkbox" id="gal-alle"> Alle auswählen</label>' +
+        '<span class="klein-hinweis" id="gal-gewaehlt" aria-live="polite"></span>' +
+        '<span class="galerie-leiste-knoepfe">' +
+        '<button type="button" class="knopf knopf-rahmen knopf-klein" id="gal-zip">' + icon('zip', 'icon-klein') + 'Auswahl herunterladen</button>' +
+        (darf ? '<button type="button" class="knopf knopf-rahmen knopf-klein" id="gal-loeschen">' + icon('papierkorb', 'icon-klein') + 'Auswahl löschen</button>' : '') +
+        '</span></div>' +
+        '<ul class="galerie-raster">' + bilder.map(function (b, i) {
+          return '<li class="galerie-kachel" data-id="' + b.id + '">' +
+            '<button type="button" class="galerie-bild" data-gal-oeffnen="' + i + '" aria-label="' + esc(b.dateiname) + ' groß anzeigen">' +
+            '<img src="' + esc(b.vorschau) + '" alt="' + esc(b.beschreibung || '') + '" loading="lazy" width="240" height="240"></button>' +
+            '<label class="galerie-check" title="Auswählen"><input type="checkbox" data-gal-wahl="' + b.id + '" aria-label="' + esc(b.dateiname) + ' auswählen"></label>' +
+            '<span class="galerie-name" title="' + esc(b.dateiname) + '">' + esc(b.dateiname) + '</span>' +
+            '<span class="galerie-meta">' + b.breite + ' × ' + b.hoehe + ' · ' + groesseText(b.groesse) + '</span></li>';
+        }).join('') + '</ul>';
+      auswahlZeigen();
+    }
+
+    function auswahlZeigen() {
+      var n = gewaehlt().length;
+      liste().querySelectorAll('[data-gal-wahl]').forEach(function (c) {
+        c.checked = !!auswahl[c.getAttribute('data-gal-wahl')];
+        c.closest('.galerie-kachel').classList.toggle('ausgewaehlt', c.checked);
+      });
+      var alle = document.getElementById('gal-alle');
+      if (alle) { alle.checked = n > 0 && n === bilder.length; alle.indeterminate = n > 0 && n < bilder.length; }
+      var text = document.getElementById('gal-gewaehlt');
+      if (text) text.textContent = n ? n + ' ausgewählt' : 'Bilder zum Herunterladen oder Löschen auswählen';
+      ['gal-zip', 'gal-loeschen'].forEach(function (k) { var el = document.getElementById(k); if (el) el.disabled = !n; });
+    }
+
+    function liste() { return document.getElementById('gal-liste'); }
+
+    // Auswahl, Großansicht, ZIP, Löschen
+    liste().addEventListener('change', function (e) {
+      if (e.target.id === 'gal-alle') {
+        var an = e.target.checked;
+        bilder.forEach(function (b) { if (an) auswahl[b.id] = true; else delete auswahl[b.id]; });
+        return auswahlZeigen();
+      }
+      var id = e.target.getAttribute('data-gal-wahl');
+      if (id) { if (e.target.checked) auswahl[id] = true; else delete auswahl[id]; auswahlZeigen(); }
+    });
+    liste().addEventListener('click', function (e) {
+      var oeffnen = e.target.closest('[data-gal-oeffnen]');
+      if (oeffnen) return galerieAnsicht(Number(oeffnen.getAttribute('data-gal-oeffnen')));
+      if (e.target.closest('#gal-zip')) return zipLaden(gewaehlt());
+      if (e.target.closest('#gal-loeschen')) return loeschen(gewaehlt());
+    });
+
+    function zipLaden(liste) {
+      if (!liste.length) return;
+      if (liste.length === 1) return dateiSpeichern(liste[0].download, liste[0].dateiname);
+      var knopf = document.getElementById('gal-zip');
+      var fertig = knopfWarten(knopf, 'ZIP wird erstellt …');
+      fetch(KONFIG.api + '?r=galerie-zip&persona=' + p.id + '&ids=' + liste.map(function (b) { return b.id; }).join(','), { credentials: 'same-origin', cache: 'no-store' })
+        .then(function (r) {
+          if (!r.ok) return r.json().catch(function () { return {}; }).then(function (j) { throw new Error(j.meldung || 'Die ZIP-Datei konnte nicht erstellt werden.'); });
+          var name = ((r.headers.get('Content-Disposition') || '').match(/filename="([^"]+)"/) || [])[1] || 'bilder.zip';
+          return r.blob().then(function (blob) {
+            var url = URL.createObjectURL(blob);
+            dateiSpeichern(url, name);
+            setTimeout(function () { URL.revokeObjectURL(url); }, 60000);
+            toast(anzahlBilder(liste.length) + ' als ZIP heruntergeladen');
+          });
+        })
+        .catch(function (err) { toast(err.message, true); })
+        .then(fertig);
+    }
+
+    function loeschen(liste, nachher) {
+      if (!liste.length) return;
+      var text = liste.length === 1
+        ? 'Möchten Sie <strong>' + esc(liste[0].dateiname) + '</strong> endgültig aus der Galerie löschen?'
+        : 'Möchten Sie <strong>' + anzahlBilder(liste.length) + '</strong> endgültig aus der Galerie löschen?';
+      return dialog({ titel: liste.length === 1 ? 'Bild löschen?' : 'Bilder löschen?', html: text + ' Gelöschte Bilder lassen sich nicht wiederherstellen.', ok: 'Löschen' }).then(function (ja) {
+        if (!ja) return false;
+        return api('galerie-loeschen', { ids: liste.map(function (b) { return b.id; }) }).then(function (j) {
+          var weg = {};
+          liste.forEach(function (b) { weg[b.id] = true; delete auswahl[b.id]; });
+          bilder = bilder.filter(function (b) { return !weg[b.id]; });
+          toast(j.geloescht === 1 ? 'Bild gelöscht' : anzahlBilder(j.geloescht) + ' gelöscht');
+          zeichnen();
+          if (nachher) nachher();
+          return true;
+        }).catch(fehlerAnzeigen);
+      });
+    }
+
+    // Großansicht mit Blättern (Pfeiltasten, Wischen), Herunterladen, Beschreibung, Profilbild, Löschen
+    function galerieAnsicht(index) {
+      var vorher = document.activeElement;
+      var huelle = document.createElement('div');
+      huelle.className = 'leuchtkasten';
+      huelle.setAttribute('role', 'dialog');
+      huelle.setAttribute('aria-modal', 'true');
+      huelle.setAttribute('aria-label', 'Bild in Großansicht');
+      document.body.appendChild(huelle);
+      document.body.classList.add('ohne-scrollen');
+
+      function zeigen() {
+        var b = bilder[index];
+        if (!b) return schliessen();
+        huelle.innerHTML =
+          '<div class="leuchtkasten-kopf">' +
+          '<div class="leuchtkasten-titel"><strong>' + esc(b.dateiname) + '</strong><span>' + (index + 1) + ' von ' + bilder.length + '</span></div>' +
+          '<div class="leuchtkasten-knoepfe">' +
+          '<a class="knopf knopf-primaer knopf-klein" href="' + esc(b.download) + '" download="' + esc(b.dateiname) + '">' + icon('herunterladen', 'icon-klein') + 'Herunterladen</a>' +
+          (darfBearbeiten() ? '<button type="button" class="knopf knopf-hell knopf-klein" data-lk="profil">' + icon('zuschnitt', 'icon-klein') + 'Als Profilbild</button>' : '') +
+          (darf ? '<button type="button" class="knopf knopf-hell knopf-klein" data-lk="loeschen">' + icon('papierkorb', 'icon-klein') + 'Löschen</button>' : '') +
+          '<button type="button" class="knopf-icon leuchtkasten-zu" data-lk="zu" aria-label="Großansicht schließen">' + icon('x') + '</button>' +
+          '</div></div>' +
+          '<div class="leuchtkasten-buehne">' +
+          (bilder.length > 1 ? '<button type="button" class="leuchtkasten-pfeil" data-lk="zurueck" aria-label="Vorheriges Bild">' + icon('zurueck') + '</button>' : '') +
+          '<img src="' + esc(b.url) + '" alt="' + esc(b.beschreibung || b.dateiname) + '">' +
+          (bilder.length > 1 ? '<button type="button" class="leuchtkasten-pfeil rechts" data-lk="weiter" aria-label="Nächstes Bild">' + icon('weiter') + '</button>' : '') +
+          '</div>' +
+          '<div class="leuchtkasten-info">' +
+          '<p>' + b.breite + ' × ' + b.hoehe + ' Pixel · ' + groesseText(b.groesse) + ' · hochgeladen am ' + esc(datumText(b.hochgeladenAm)) + (b.hochgeladenVon ? ' von ' + esc(b.hochgeladenVon) : '') +
+          (b.originalName && b.originalName !== b.dateiname ? ' · ursprünglich „' + esc(b.originalName) + '“' : '') + '</p>' +
+          '<div id="lk-beschreibung">' + beschreibungHtml(b) + '</div>' +
+          '</div>';
+        var zu = huelle.querySelector('[data-lk="zu"]');
+        if (zu) zu.focus();
+      }
+
+      function beschreibungHtml(b) {
+        return (b.beschreibung ? '<p class="leuchtkasten-text">' + esc(b.beschreibung) + '</p>' : '') +
+          (darf ? '<button type="button" class="link" data-lk="beschreiben">' + icon('stift', 'icon-klein') + (b.beschreibung ? 'Beschreibung ändern' : 'Beschreibung hinzufügen') + '</button>' : '');
+      }
+
+      function beschreiben() {
+        var b = bilder[index];
+        var feld = document.getElementById('lk-beschreibung');
+        feld.innerHTML = '<form class="leuchtkasten-form" id="lk-form"><label class="sr-only" for="lk-text">Beschreibung</label>' +
+          '<input id="lk-text" type="text" maxlength="500" value="' + esc(b.beschreibung || '') + '" placeholder="z. B. Szene im Garten, Variante mit Brille">' +
+          '<button type="submit" class="knopf knopf-primaer knopf-klein">' + icon('speichern', 'icon-klein') + 'Speichern</button>' +
+          '<button type="button" class="knopf knopf-hell knopf-klein" data-lk="beschreiben-abbrechen">Abbrechen</button></form>';
+        var eingabeFeld = document.getElementById('lk-text');
+        eingabeFeld.focus();
+        document.getElementById('lk-form').addEventListener('submit', function (e) {
+          e.preventDefault();
+          api('galerie-beschreibung', { id: b.id, beschreibung: eingabeFeld.value }).then(function (j) {
+            bilder[index] = j.bild;
+            feld.innerHTML = beschreibungHtml(j.bild);
+            toast('Beschreibung gespeichert');
+          }).catch(fehlerAnzeigen);
+        });
+      }
+
+      function blaettern(schritt) {
+        if (bilder.length < 2) return;
+        index = (index + schritt + bilder.length) % bilder.length;
+        zeigen();
+      }
+
+      function schliessen() {
+        document.removeEventListener('keydown', taste);
+        huelle.remove();
+        document.body.classList.remove('ohne-scrollen');
+        if (vorher && document.body.contains(vorher)) vorher.focus();
+      }
+
+      function taste(e) {
+        if (document.querySelector('.dialog-huelle')) return; // Rückfrage offen
+        if (e.target && e.target.id === 'lk-text') { if (e.key === 'Escape') { e.preventDefault(); document.getElementById('lk-beschreibung').innerHTML = beschreibungHtml(bilder[index]); } return; }
+        if (e.key === 'Escape') schliessen();
+        else if (e.key === 'ArrowLeft') blaettern(-1);
+        else if (e.key === 'ArrowRight') blaettern(1);
+        else if (e.key === 'Tab') {
+          var fokus = Array.prototype.slice.call(huelle.querySelectorAll('a, button, input'));
+          if (!fokus.length) return;
+          var erstes = fokus[0], letztes = fokus[fokus.length - 1];
+          if (e.shiftKey && document.activeElement === erstes) { e.preventDefault(); letztes.focus(); }
+          else if (!e.shiftKey && document.activeElement === letztes) { e.preventDefault(); erstes.focus(); }
+        }
+      }
+
+      var startX = null;
+      huelle.addEventListener('pointerdown', function (e) { if (e.target.tagName === 'IMG') startX = e.clientX; });
+      huelle.addEventListener('pointerup', function (e) {
+        if (startX === null) return;
+        var dx = e.clientX - startX;
+        startX = null;
+        if (Math.abs(dx) > 50) blaettern(dx < 0 ? 1 : -1);
+      });
+      huelle.addEventListener('click', function (e) {
+        if (e.target.classList.contains('leuchtkasten-buehne')) return schliessen();
+        var k = e.target.closest('[data-lk]');
+        if (!k) return;
+        var aktion = k.getAttribute('data-lk');
+        if (aktion === 'zu') schliessen();
+        else if (aktion === 'zurueck') blaettern(-1);
+        else if (aktion === 'weiter') blaettern(1);
+        else if (aktion === 'beschreiben') beschreiben();
+        else if (aktion === 'beschreiben-abbrechen') document.getElementById('lk-beschreibung').innerHTML = beschreibungHtml(bilder[index]);
+        else if (aktion === 'loeschen') {
+          loeschen([bilder[index]], function () {
+            if (!bilder.length) return schliessen();
+            index = Math.min(index, bilder.length - 1);
+            zeigen();
+          });
+        } else if (aktion === 'profil') {
+          var b = bilder[index];
+          schliessen();
+          profilbildAusGalerie(b);
+        }
+      });
+      document.addEventListener('keydown', taste);
+      zeigen();
+    }
+
+    function profilbildAusGalerie(b) {
+      bildLaden(b.url).then(function (img) {
+        return zuschnittDialog(img).then(function (erg) {
+          if (!erg) return;
+          var aktuell = persona(p.id);
+          if (!aktuell) return;
+          var daten = Object.assign({}, aktuell, { bild: erg.quadrat, bildGross: verkleinern(img, 800, 0.85) });
+          return serverAenderung('speichern', { typ: 'persona', id: aktuell.id, version: aktuell.version, daten: daten }, 'Profilbild geändert')
+            .then(function (j) { if (j) zeichneSeite(); });
+        });
+      }).catch(function (err) { toast(err.message, true); });
+    }
+
+    // Hochladen: Drag & Drop oder Dateiauswahl, nacheinander mit Fortschritt
+    if (darf) {
+      var zone = document.getElementById('gal-upload');
+      var karteEl = document.getElementById('galerie');
+      var dateiFeld = document.getElementById('gal-datei');
+      var tiefe = 0;
+      zone.addEventListener('click', function () { dateiFeld.click(); });
+      zone.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); dateiFeld.click(); } });
+      dateiFeld.addEventListener('change', function () { hochladen(Array.prototype.slice.call(dateiFeld.files)); dateiFeld.value = ''; });
+      karteEl.addEventListener('dragenter', function (e) { if (hatDateien(e)) { e.preventDefault(); tiefe++; zone.classList.add('ziehen'); } });
+      karteEl.addEventListener('dragover', function (e) { if (hatDateien(e)) { e.preventDefault(); e.dataTransfer.dropEffect = 'copy'; } });
+      karteEl.addEventListener('dragleave', function () { tiefe = Math.max(0, tiefe - 1); if (!tiefe) zone.classList.remove('ziehen'); });
+      karteEl.addEventListener('drop', function (e) {
+        if (!hatDateien(e)) return;
+        e.preventDefault();
+        tiefe = 0;
+        zone.classList.remove('ziehen');
+        hochladen(Array.prototype.slice.call(e.dataTransfer.files));
+      });
+    }
+
+    function hochladen(dateien) {
+      if (!dateien.length) return;
+      var box = document.getElementById('gal-fortschritt');
+      var eintraege = dateien.map(function (datei, i) {
+        var fehler = GALERIE.typen.indexOf(datei.type) < 0 ? 'Kein unterstütztes Bildformat (JPG, PNG, WebP, GIF).'
+          : datei.size > GALERIE.maxBytes ? 'Größer als 20 MB (' + groesseText(datei.size) + ').' : null;
+        return { datei: datei, nr: i, fehler: fehler };
+      });
+      box.innerHTML = '<div class="galerie-fortschritt"><ul>' + eintraege.map(function (e) {
+        return '<li id="gal-f-' + e.nr + '"><span class="galerie-fortschritt-name">' + esc(e.datei.name) + '</span>' +
+          (e.fehler ? '<span class="formfehler">Fehler: ' + esc(e.fehler) + '</span>'
+            : '<progress max="100" value="0" aria-label="Fortschritt ' + esc(e.datei.name) + '"></progress><span class="klein-hinweis">wartet</span>') + '</li>';
+      }).join('') + '</ul><p class="galerie-fortschritt-fazit" id="gal-fazit" aria-live="polite"></p></div>';
+      var ergebnis = { ok: 0, doppelt: 0, fehler: eintraege.filter(function (e) { return e.fehler; }).length };
+      var kette = Promise.resolve();
+      eintraege.filter(function (e) { return !e.fehler; }).forEach(function (e) {
+        kette = kette.then(function () { return eineDatei(e, ergebnis); });
+      });
+      kette.then(function () {
+        var teile = [];
+        if (ergebnis.ok) teile.push(anzahlBilder(ergebnis.ok) + ' hochgeladen');
+        if (ergebnis.doppelt) teile.push(ergebnis.doppelt + ' bereits vorhanden');
+        if (ergebnis.fehler) teile.push(ergebnis.fehler + ' nicht übernommen');
+        var fazit = document.getElementById('gal-fazit');
+        if (!fazit) return;
+        fazit.innerHTML = esc(teile.join(', ')) + '. <button type="button" class="link" id="gal-f-zu">Liste ausblenden</button>';
+        document.getElementById('gal-f-zu').addEventListener('click', function () { box.innerHTML = ''; });
+        if (ergebnis.ok) toast(anzahlBilder(ergebnis.ok) + ' hochgeladen');
+        if (!ergebnis.doppelt && !ergebnis.fehler) setTimeout(function () { if (document.getElementById('gal-fazit') === fazit) box.innerHTML = ''; }, 4000);
+      });
+    }
+
+    function eintragSetzen(e, html) {
+      var li = document.getElementById('gal-f-' + e.nr);
+      if (li) li.innerHTML = '<span class="galerie-fortschritt-name">' + esc(e.datei.name) + '</span>' + html;
+    }
+
+    function eineDatei(e, ergebnis) {
+      var li = document.getElementById('gal-f-' + e.nr);
+      if (!li) return Promise.resolve();
+      li.querySelector('.klein-hinweis').textContent = 'Vorschau wird erstellt …';
+      return vorschauErzeugen(e.datei).then(function (vorschau) {
+        return new Promise(function (resolve) {
+          var fd = new FormData();
+          fd.append('persona', p.id);
+          fd.append('datei', e.datei, e.datei.name);
+          if (vorschau) fd.append('vorschau', vorschau, 'vorschau.jpg');
+          var xhr = new XMLHttpRequest();
+          xhr.open('POST', KONFIG.api + '?r=galerie-hochladen');
+          xhr.setRequestHeader('X-Lernwelt', '1');
+          xhr.setRequestHeader('X-CSRF-Token', store.ich ? store.ich.csrf : '');
+          var balken = li.querySelector('progress'), status = li.querySelector('.klein-hinweis');
+          status.textContent = 'wird hochgeladen …';
+          xhr.upload.onprogress = function (ev) { if (ev.lengthComputable && balken) balken.value = Math.round(ev.loaded / ev.total * 100); };
+          xhr.onload = function () {
+            var j = {};
+            try { j = JSON.parse(xhr.responseText); } catch (x) { j = {}; }
+            if (xhr.status === 200 && j.ok) {
+              ergebnis.ok++;
+              bilder.unshift(j.bild);
+              zeichnen();
+              eintragSetzen(e, '<span class="galerie-fortschritt-ok">' + icon('haken', 'icon-klein') + (j.bild.dateiname !== e.datei.name ? 'gespeichert als ' + esc(j.bild.dateiname) : 'gespeichert') + '</span>');
+            } else if (xhr.status === 409 && j.doppelt) {
+              ergebnis.doppelt++;
+              eintragSetzen(e, '<span class="klein-hinweis">' + esc(j.meldung) + '</span>');
+            } else if (xhr.status === 401 && j.anmelden) {
+              zeigeAnmeldung('Ihre Sitzung ist abgelaufen. Bitte melden Sie sich erneut an.');
+            } else {
+              ergebnis.fehler++;
+              eintragSetzen(e, '<span class="formfehler">Fehler: ' + esc(j.meldung || (xhr.status === 413 ? 'Die Datei ist zu groß für den Server.' : 'Hochladen fehlgeschlagen (HTTP ' + xhr.status + ').')) + '</span>');
+            }
+            resolve();
+          };
+          xhr.onerror = function () {
+            ergebnis.fehler++;
+            eintragSetzen(e, '<span class="formfehler">Fehler: Der Server ist nicht erreichbar.</span>');
+            resolve();
+          };
+          xhr.send(fd);
+        });
+      });
+    }
+
+    laden();
+  }
+
+  function hatDateien(e) {
+    return e.dataTransfer && Array.prototype.indexOf.call(e.dataTransfer.types || [], 'Files') >= 0;
+  }
+
+  // Vorschaubild im Browser (spart Rechenzeit und Speicher auf dem Server); null, wenn das nicht klappt
+  function vorschauErzeugen(datei) {
+    var url = URL.createObjectURL(datei);
+    return bildLaden(url).then(function (img) {
+      var f = Math.min(1, GALERIE.vorschauKante / Math.max(img.naturalWidth, img.naturalHeight));
+      var c = document.createElement('canvas');
+      c.width = Math.max(1, Math.round(img.naturalWidth * f));
+      c.height = Math.max(1, Math.round(img.naturalHeight * f));
+      var ctx = c.getContext('2d');
+      ctx.fillStyle = '#fff';
+      ctx.fillRect(0, 0, c.width, c.height);
+      ctx.drawImage(img, 0, 0, c.width, c.height);
+      return new Promise(function (resolve) { c.toBlob(resolve, 'image/jpeg', 0.82); });
+    }).catch(function () { return null; }).then(function (blob) {
+      URL.revokeObjectURL(url);
+      return blob;
+    });
+  }
+
+  function dateiSpeichern(url, name) {
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = name;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
   }
 
   // ------------------------------------------------------------------
@@ -1039,7 +1478,8 @@
       '<div class="unterzeile">' + esc(p.funktion || '–') + (p.beruf ? ' · ' + esc(p.beruf) : '') + '</div>' +
       '<div class="chips">' +
       (p.personaId ? '<span class="chip chip-grau">ID ' + esc(p.personaId) + '</span>' : '') +
-      (p.cJourney ? '<span class="chip chip-grau">Customer Journey: ' + esc(p.cJourney) + '</span>' : '') + '</div>' +
+      (p.cJourney ? '<span class="chip chip-grau">Customer Journey: ' + esc(p.cJourney) + '</span>' : '') +
+      (store.modus !== 'vorschau' ? '<button type="button" class="chip chip-knopf" id="zur-galerie">' + icon('bild', 'icon-klein') + 'Galerie' + (p.galerieAnzahl ? ' (' + p.galerieAnzahl + ')' : '') + '</button>' : '') + '</div>' +
       (fakten.length ? '<div class="profil-fakten">' + fakten.join('') + '</div>' : '') +
       geaendertHinweis(p) +
       '</div></div></section>' +
@@ -1060,9 +1500,12 @@
         feld('Charakter', p.charakter), feld('Aktivitäten', p.aktivitaeten), feld('Sonstiges', p.sonstiges)])) +
       karte('Firmenzugehörigkeit', 'firma', firmenHtml) +
       karte('Voiceover & Avatar', 'mikro', feldListe([feld('WoC-Stimme', p.wocStimme), feld('DID-Avatar', p.didAvatar)])) +
-      karte('Links & Medien', 'ordner', p.bilderLink ? dateiLinkBlock(p.bilderLink, 'Ordner im Explorer öffnen') : '<p class="leer">Kein Bilder-Link hinterlegt.</p>') +
       karte('E-Learning-Formate', 'buch', formateHtml) +
-      '</div></div>';
+      '</div>' + galerieKarte() + '</div>';
+
+    galerieAnbinden(p);
+    var zurGalerie = document.getElementById('zur-galerie');
+    if (zurGalerie) zurGalerie.addEventListener('click', function () { document.getElementById('galerie').scrollIntoView({ behavior: 'smooth' }); });
 
     loeschenAnbinden('p-loeschen', 'persona', id, 'Persona löschen?', 'Möchten Sie <strong>' + esc(vollerName(p)) + '</strong> wirklich löschen? Beziehungen und Zuordnungen dieser Persona werden ebenfalls entfernt. Die Administration kann gelöschte Einträge wiederherstellen.', '/personas');
 
@@ -1187,8 +1630,6 @@
         '<button type="button" class="knopf knopf-rahmen knopf-klein" id="pf-bez-hinzu">' + icon('plus', 'icon-klein') + 'Verwandte/n hinzufügen</button>') +
       karte('Voiceover & Avatar', 'mikro', '<div class="raster raster-3">' +
         eingabe('pf-wocStimme', 'WoC-Stimme', p.wocStimme) + eingabe('pf-didAvatar', 'DID-Avatar', p.didAvatar) + '</div>') +
-      karte('Links & Medien', 'ordner', '<div class="raster">' +
-        eingabe('pf-bilderLink', 'Bilder-Link', p.bilderLink, 'text', ' placeholder="\\\\Server\\Freigabe\\Ordner oder X:\\Ordner"') + '</div>') +
       '<div style="display:flex;justify-content:flex-end"><button type="submit" class="knopf knopf-primaer">' + icon('speichern') + 'Speichern</button></div>' +
       '</div></form>';
 
@@ -1307,7 +1748,7 @@
         charakter: oderNull(wert('pf-charakter')), sonstiges: oderNull(wert('pf-sonstiges')),
         verwandt: oderNull(wert('pf-verwandt')),
         wocStimme: oderNull(wert('pf-wocStimme')), didAvatar: oderNull(wert('pf-didAvatar')),
-        bilderLink: oderNull(wert('pf-bilderLink')),
+        bilderLink: bestehend ? bestehend.bilderLink : null, // nicht mehr in der Oberfläche, Wert bleibt erhalten
         bild: zustand.bild, bildGross: zustand.bildGross
       };
       if (daten.personaId !== null && d.personas.some(function (x) { return x.personaId === daten.personaId && x.id !== id; })) {
@@ -1616,7 +2057,7 @@
       ['beruf', 'Beruf'], ['kundenprofil', 'Kundenprofil'], ['cJourney', 'Customer Journey'], ['geschlecht', 'Geschlecht'], ['geburtstag', 'Geburtstag'],
       ['alter', 'Alter'], ['herkunft', 'Herkunft'], ['strasse', 'Straße'], ['plz', 'PLZ'], ['ort', 'Ort'], ['stadtteil', 'Stadtteil'], ['wohnart', 'Wohnart'],
       ['familienstand', 'Familienstand'], ['verwandt', 'Weitere Familienangaben'], ['lebenslauf', 'Lebenslauf'], ['aktivitaeten', 'Aktivitäten'],
-      ['charakter', 'Charakter'], ['sonstiges', 'Sonstiges'], ['wocStimme', 'WoC-Stimme'], ['didAvatar', 'DID-Avatar'], ['bilderLink', 'Bilder-Link']],
+      ['charakter', 'Charakter'], ['sonstiges', 'Sonstiges'], ['wocStimme', 'WoC-Stimme'], ['didAvatar', 'DID-Avatar']],
     firma: [['name', 'Name'], ['firmenId', 'ID'], ['funktion', 'Funktion'], ['branche', 'Branche'], ['strasse', 'Straße'], ['plz', 'PLZ'], ['ort', 'Ort'], ['sonstiges', 'Sonstiges']],
     format: [['name', 'Name'], ['formatId', 'ID'], ['formatTyp', 'Format-Typ'], ['medienentwickler', 'Medienentwickler'], ['link', 'Datei-Link'], ['httpLink', 'HTTP-Link']]
   };
@@ -2071,12 +2512,13 @@
           '<div><button type="submit" class="knopf knopf-rahmen" id="mt-knopf">' + icon('senden') + 'Test-E-Mail senden</button></div></form>') +
         karte('Datenhaltung', 'datenbank', '<div class="stapel" style="gap:16px">' +
           '<p style="margin:0">Alle Daten liegen in der MySQL-Datenbank. Jede Änderung wird als Version gespeichert und im Protokoll festgehalten.</p>' +
-          '<dl class="felder">' + feld('Personas / Firmen / Formate', d.personas.length + ' / ' + d.firmen.length + ' / ' + d.formate.length) + '</dl>' +
+          '<dl class="felder">' + feld('Personas / Firmen / Formate', d.personas.length + ' / ' + d.firmen.length + ' / ' + d.formate.length) +
+          feld('Galerie', anzahlBilder(e.galerie.anzahl) + ' bei ' + e.galerie.personas + (e.galerie.personas === 1 ? ' Persona' : ' Personas') + ', ' + groesseText(e.galerie.bytes) + ' belegt') + '</dl>' +
           '<div style="display:flex;flex-wrap:wrap;gap:8px">' +
           '<button type="button" class="knopf knopf-primaer" id="e-export">' + icon('herunterladen') + 'Daten exportieren</button>' +
           '<label class="knopf knopf-rahmen" for="e-import">' + icon('hochladen') + 'Daten importieren</label>' +
           '<input id="e-import" type="file" accept="application/json,.json" hidden></div>' +
-          '<p class="klein-hinweis">Der Export enthält alle Texte, Zuordnungen und Bilder als eine JSON-Datei. Ein Import ersetzt den gesamten Datenbestand; die bisherigen Stände bleiben als Versionen erhalten.</p></div>') +
+          '<p class="klein-hinweis">Der Export enthält alle Texte, Zuordnungen und Profilbilder als eine JSON-Datei. Die Galerie-Bilder gehören nicht dazu; sie liegen als Dateien im Galerie-Ordner auf dem Server und werden über dessen Sicherung (FTP) gesichert. Ein Import ersetzt den gesamten Datenbestand; die bisherigen Stände bleiben als Versionen erhalten.</p></div>') +
         karte('Gelöschte Einträge', 'papierkorb', geloescht.length ? '<div class="liste">' + geloescht.map(function (g) {
           return '<div class="eintrag" style="flex-wrap:wrap"><span style="min-width:0;flex:1 1 200px"><span class="eintrag-titel">' + esc(g.name) + '</span><br><span class="eintrag-sub">' + esc(g.typName) + ' · gelöscht ' + esc(datumText(g.zeit)) + (g.benutzer ? ' von ' + esc(g.benutzer) : '') + '</span></span>' +
             '<button type="button" class="knopf knopf-rahmen knopf-klein" data-wiederherstellen="' + g.versionId + '">' + icon('wiederherstellen', 'icon-klein') + 'Wiederherstellen</button></div>';

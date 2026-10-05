@@ -5,3 +5,6 @@ lernwelt-konfiguration.php
 # Abacus-Exporte (enthalten Zugangsdaten) nicht einchecken
 *.zip
 .env
+
+# Hochgeladene Galerie-Bilder (liegen nur auf dem Server)
+webapp/daten/galerie/

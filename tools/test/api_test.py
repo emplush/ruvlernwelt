@@ -8,7 +8,9 @@ Admin michael.herget@ruv.de / Passwort "EinSicheresPasswort-2026", Mails gehen i
 Startet bei jedem Lauf mit leerer Datenbank (tools/test/test_starten.sh).
 """
 import http.cookiejar
+import io
 import json
+import os
 import re
 import subprocess
 import sys
@@ -18,6 +20,12 @@ import urllib.request
 BASIS, MAILS, DB = sys.argv[1].rstrip('/'), sys.argv[2], sys.argv[3]
 ADMIN, ADMIN_PW = 'michael.herget@ruv.de', 'EinSicheresPasswort-2026'
 fehler = []
+BILDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'webapp', 'einrichtung', 'startdaten', 'bilder')
+
+
+def bild(name):
+    with open(os.path.join(BILDER, name), 'rb') as f:
+        return f.read()
 
 
 def pruefe(bedingung, text):
@@ -41,6 +49,26 @@ class Sitzung:
             with self.opener.open(req) as r:
                 inhalt = r.read()
                 return r.status, (inhalt if roh else json.loads(inhalt))
+        except urllib.error.HTTPError as e:
+            return e.code, json.loads(e.read() or b'{}')
+
+    def hochladen(self, persona, name, inhalt, mime='image/jpeg', vorschau=None):
+        grenze = '----lernwelt-test'
+        teile = io.BytesIO()
+        felder = [('persona', None, str(persona).encode(), None), ('datei', name, inhalt, mime)]
+        if vorschau:
+            felder.append(('vorschau', 'vorschau.jpg', vorschau, 'image/jpeg'))
+        for feld, dateiname, wert, typ in felder:
+            teile.write(('--%s\r\nContent-Disposition: form-data; name="%s"' % (grenze, feld)).encode())
+            if dateiname:
+                teile.write(('; filename="%s"\r\nContent-Type: %s' % (dateiname, typ)).encode('utf-8'))
+            teile.write(b'\r\n\r\n' + wert + b'\r\n')
+        teile.write(('--%s--\r\n' % grenze).encode())
+        h = {'X-Lernwelt': '1', 'X-CSRF-Token': self.csrf, 'Content-Type': 'multipart/form-data; boundary=' + grenze}
+        req = urllib.request.Request(BASIS + '/api/index.php?r=galerie-hochladen', data=teile.getvalue(), headers=h, method='POST')
+        try:
+            with self.opener.open(req) as r:
+                return r.status, json.loads(r.read())
         except urllib.error.HTTPError as e:
             return e.code, json.loads(e.read() or b'{}')
 
@@ -165,6 +193,50 @@ pruefe(s == 403, 'Nutzerin darf nichts löschen')
 s, d = nutzer.anfrage('benutzer')
 pruefe(s == 403, 'Nutzerin sieht keine Benutzerverwaltung')
 
+# --- Galerie: Mediengestalter lädt hoch, Nutzerin sieht und lädt herunter
+s, d = mg.hochladen(p['id'], 'Porträt Ottmar (Garten).JPG', bild('1004.jpg'))
+pruefe(s == 200 and d['bild']['dateiname'] == 'portraet-ottmar-garten.jpg' and d['bild']['breite'] > 0, 'Galerie: Upload, Dateiname bereinigt')
+g1 = d['bild']
+s, d = mg.hochladen(p['id'], 'portraet ottmar garten.jpg', bild('1005.jpg'))
+pruefe(s == 200 and d['bild']['dateiname'] == 'portraet-ottmar-garten-2.jpg', 'Galerie: gleicher Name bekommt „-2“')
+g2 = d['bild']
+s, d = mg.hochladen(p['id'], 'kopie.jpg', bild('1004.jpg'))
+pruefe(s == 409 and d.get('doppelt') and 'portraet-ottmar-garten.jpg' in d['meldung'], 'Galerie: doppeltes Bild wird erkannt')
+s, d = mg.hochladen(p['id'], 'boese.jpg', b'<?php echo 1; ?>', 'image/jpeg')
+pruefe(s == 400, 'Galerie: Datei ohne Bildinhalt wird abgelehnt')
+s, d = mg.hochladen(p['id'], 'gross.jpg', bild('1004.jpg') + b'0' * (21 * 1024 * 1024))
+pruefe(s == 400 and 'MB' in d['meldung'], 'Galerie: zu große Datei wird abgelehnt')
+s, d = mg.hochladen(999999, 'x.jpg', bild('1006.jpg'))
+pruefe(s == 404, 'Galerie: unbekannte Persona')
+csrf = mg.csrf; mg.csrf = ''
+s, d = mg.hochladen(p['id'], 'ohne-token.jpg', bild('1006.jpg'))
+mg.csrf = csrf
+pruefe(s == 403, 'Galerie: Upload ohne CSRF-Token abgelehnt')
+s, d = nutzer.hochladen(p['id'], 'nutzer.jpg', bild('1006.jpg'))
+pruefe(s == 403, 'Galerie: Nutzerin darf nicht hochladen')
+s, d = nutzer.anfrage('galerie&persona=%d' % p['id'])
+pruefe(s == 200 and [b['id'] for b in d['bilder']] == [g2['id'], g1['id']], 'Galerie: Nutzerin sieht die Liste (neueste zuerst)')
+s, roh = nutzer.anfrage('galerie-datei&id=%d' % g1['id'], roh=True)
+pruefe(s == 200 and roh == bild('1004.jpg'), 'Galerie: Original unverändert herunterladbar')
+s, roh = nutzer.anfrage('galerie-datei&id=%d&art=vorschau' % g1['id'], roh=True)
+pruefe(s == 200 and roh[:2] == b'\xff\xd8' and len(roh) < len(bild('1004.jpg')), 'Galerie: Vorschaubild vom Server erzeugt')
+s, roh = nutzer.anfrage('galerie-zip&persona=%d&ids=%d,%d' % (p['id'], g1['id'], g2['id']), roh=True)
+import zipfile
+namen = sorted(zipfile.ZipFile(io.BytesIO(roh)).namelist()) if s == 200 else []
+pruefe(namen == ['portraet-ottmar-garten-2.jpg', 'portraet-ottmar-garten.jpg'], 'Galerie: Auswahl als ZIP')
+s, d = nutzer.anfrage('galerie-zip&persona=%d&ids=%d' % (p['id'] + 1, g1['id']))
+pruefe(s == 404, 'Galerie: ZIP nur mit Bildern der angegebenen Persona')
+s, d = Sitzung().anfrage('galerie-datei&id=%d' % g1['id'])
+pruefe(s == 401, 'Galerie: ohne Anmeldung kein Bild')
+s, d = nutzer.anfrage('galerie-loeschen', {'ids': [g1['id']]})
+pruefe(s == 403, 'Galerie: Nutzerin darf nicht löschen')
+s, d = nutzer.anfrage('galerie-beschreibung', {'id': g1['id'], 'beschreibung': 'x'})
+pruefe(s == 403, 'Galerie: Nutzerin darf nicht beschreiben')
+s, d = mg.anfrage('galerie-beschreibung', {'id': g1['id'], 'beschreibung': 'Im Garten'})
+pruefe(s == 200 and d['bild']['beschreibung'] == 'Im Garten', 'Galerie: Beschreibung gespeichert')
+s, d = nutzer.anfrage('daten')
+pruefe([x for x in d['personas'] if x['id'] == p['id']][0]['galerieAnzahl'] == 2, 'Galerie: Anzahl im Datenbestand')
+
 # --- Versionen und Wiederherstellen
 s, d = admin.anfrage('versionen&typ=persona&id=%d' % p['id'])
 pruefe(s == 200 and d['versionen'][0]['aktion'] == 'geaendert' and d['versionen'][1]['aktion'] == 'importiert', 'Versionsliste der Persona')
@@ -221,6 +293,23 @@ pruefe(s == 200 and s2 == 403 and 'deaktiviert' in d2['meldung'], 'Deaktiviertes
 s, d = admin.anfrage('benutzer-status', {'id': nora['id'], 'aktiv': True})
 s2, d2 = Sitzung().anmelden('nora.neu@example.org', 'Drittes-Passwort-2026')
 pruefe(s == 200 and s2 == 200 and d2['ich']['rolle'] == 'designer', 'Wieder aktiviert, Anmeldung als Designer')
+
+# --- Galerie als Designerin: hochladen und löschen ja, Personas bearbeiten nein
+designer = Sitzung()
+designer.anmelden('nora.neu@example.org', 'Drittes-Passwort-2026')
+s, d = designer.hochladen(p['id'], 'Szene.png', bild('1006.jpg'), 'image/png')
+pruefe(s == 200 and d['bild']['dateiname'] == 'szene.jpg' and d['bild']['mime'] == 'image/jpeg', 'Galerie: Designerin lädt hoch, Endung nach echtem Format')
+g3 = d['bild']
+s, d = designer.anfrage('speichern', {'typ': 'firma', 'daten': {'name': 'Test'}})
+pruefe(s == 403, 'Designerin darf weiterhin keine Daten bearbeiten')
+s, d = designer.anfrage('galerie-loeschen', {'ids': [g2['id'], g3['id']]})
+pruefe(s == 200 and d['geloescht'] == 2 and d['anzahl'].get(str(p['id'])) == 1, 'Galerie: Designerin löscht eine Auswahl')
+s, d = designer.anfrage('galerie-datei&id=%d' % g3['id'])
+pruefe(s == 404, 'Galerie: gelöschtes Bild ist weg')
+s, d = admin.anfrage('protokoll&bereich=daten&suche=Galerie')
+pruefe(s == 200 and any('hochgeladen' in e['beschreibung'] for e in d['eintraege']) and any('2 Bilder' in e['beschreibung'] for e in d['eintraege']), 'Galerie: Hochladen und Löschen im Protokoll')
+s, d = admin.anfrage('einstellungen')
+pruefe(s == 200 and d['galerie']['anzahl'] == 1 and d['galerie']['bytes'] == len(bild('1004.jpg')), 'Galerie: Speicherübersicht in den Einstellungen')
 
 # --- Drosselung
 for i in range(5):

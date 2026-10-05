@@ -2,6 +2,9 @@
 // Aufruf: NODE_PATH=$(npm root -g) node ui_test.js <basis-url> <mails.jsonl> [bilder-ordner]
 const { chromium } = require('playwright');
 const fs = require('fs');
+const path = require('path');
+const STARTBILDER = path.join(__dirname, '..', '..', 'webapp', 'einrichtung', 'startdaten', 'bilder');
+const testbild = (datei, name) => ({ name: name, mimeType: 'image/jpeg', buffer: fs.readFileSync(path.join(STARTBILDER, datei)) });
 const [URL, MAILS, BILDER] = process.argv.slice(2);
 const fehler = [];
 let schritt = 0;
@@ -15,7 +18,7 @@ function link(an, art) {
 (async () => {
   const browser = await chromium.launch();
   async function seite(opt) {
-    const ctx = await browser.newContext(Object.assign({ viewport: { width: 1360, height: 900 } }, opt || {}));
+    const ctx = await browser.newContext(Object.assign({ viewport: { width: 1360, height: 900 }, acceptDownloads: true }, opt || {}));
     const p = await ctx.newPage();
     p.on('pageerror', e => fehler.push('JS-Fehler: ' + e.message));
     p.on('console', m => { if (m.type() === 'error' && !/40[0139]|429/.test(m.text())) fehler.push('Konsole: ' + m.text()); });
@@ -80,6 +83,27 @@ function link(an, art) {
   pruefe((await mg.textContent('.geaendert')).includes('Mia Gestalter'), 'Detailseite zeigt „Zuletzt geändert von Mia Gestalter“');
   await foto(mg, 'detail-geaendert');
 
+  // Galerie: Mediengestalterin lädt per Dateiauswahl und Drag & Drop hoch
+  await mg.setInputFiles('#gal-datei', [testbild('1004.jpg', 'Ottmar im Garten.jpg'), testbild('1005.jpg', 'Szene Küche.JPG')]);
+  await mg.waitForSelector('#gal-fazit:has-text("2 Bilder hochgeladen")');
+  pruefe(await mg.locator('.galerie-name', { hasText: 'szene-kueche.jpg' }).count() === 1, 'Galerie: Upload mit bereinigtem Dateinamen');
+  const ziehen = await mg.evaluateHandle(async () => {
+    const c = document.createElement('canvas'); c.width = 320; c.height = 200; c.getContext('2d').fillRect(0, 0, 320, 200);
+    const blob = await new Promise(r => c.toBlob(r, 'image/png'));
+    const dt = new DataTransfer(); dt.items.add(new File([blob], 'Gezogen.png', { type: 'image/png' })); return dt;
+  });
+  await mg.dispatchEvent('#gal-upload', 'drop', { dataTransfer: ziehen });
+  await mg.waitForSelector('.galerie-name:has-text("gezogen.png")');
+  pruefe((await mg.textContent('#zur-galerie')).includes('(3)'), 'Galerie: Drag & Drop, Zähler aktualisiert');
+  await mg.click('[data-gal-oeffnen="1"]'); await mg.waitForSelector('.leuchtkasten img');
+  await mg.keyboard.press('ArrowRight');
+  pruefe((await mg.textContent('.leuchtkasten-titel')).includes('3 von 3'), 'Galerie: Großansicht mit Blättern per Pfeiltaste');
+  await foto(mg, 'galerie-gross');
+  await mg.click('[data-lk="loeschen"]'); await mg.click('.dialog [data-antwort="ja"]');
+  await mg.waitForSelector('.leuchtkasten-titel:has-text("von 2")');
+  await mg.keyboard.press('Escape');
+  pruefe(await mg.locator('.galerie-kachel').count() === 2 && !(await mg.isVisible('.leuchtkasten')), 'Galerie: Löschen aus der Großansicht');
+
   // Mediengestalterin lädt Nutzer ein
   await mg.click('.nav >> text=Benutzer'); await mg.waitForSelector('.tabelle');
   pruefe(await mg.locator('.tabelle a:has-text("Bearbeiten")').count() === 0, 'Mediengestalterin sieht keine Bearbeiten-Knöpfe bei Konten');
@@ -98,6 +122,11 @@ function link(an, art) {
   await nutzer.goto(URL + '#/personas/1'); await nutzer.waitForSelector('.profil h1');
   pruefe(!(await nutzer.isVisible('text=Bearbeiten')) && !(await nutzer.isVisible('#p-loeschen')) && await nutzer.isVisible('text=Versionen'), 'Nutzerin: Detailseite ohne Bearbeiten/Löschen, mit Versionen');
   pruefe(!(await nutzer.textContent('.nav-liste')).includes('Benutzer'), 'Nutzerin: kein Menüpunkt Benutzer');
+  await nutzer.waitForSelector('.galerie-kachel');
+  pruefe(!(await nutzer.isVisible('#gal-upload')) && !(await nutzer.isVisible('#gal-loeschen')) && await nutzer.isVisible('#gal-zip'), 'Nutzerin: Galerie ohne Hochladen/Löschen, mit Herunterladen');
+  await nutzer.check('#gal-alle');
+  const [zip] = await Promise.all([nutzer.waitForEvent('download'), nutzer.click('#gal-zip')]);
+  pruefe(/-bilder\.zip$/.test(zip.suggestedFilename()), 'Nutzerin: Auswahl als ZIP heruntergeladen');
   await foto(nutzer, 'nutzerin-detail');
   await nutzer.goto(URL + '#/personas/1/bearbeiten'); await nutzer.waitForTimeout(400);
   pruefe(!(await nutzer.isVisible('#persona-form')), 'Nutzerin kommt nicht ins Formular');
