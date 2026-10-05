@@ -1,9 +1,18 @@
 // Bildschirmfotos für das Handbuch und PDF-Fassung. Aufruf über bauen.sh.
+// Richtet eine frische Testumgebung ein (Admin, Mediengestalterin, Nutzer) und fotografiert alle Ansichten.
 const { chromium } = require('playwright');
 const path = require('path');
 const fs = require('fs');
-const [URL, ZIEL, KOPIE] = process.argv.slice(2);
+const [URL, ZIEL, ARBEIT] = process.argv.slice(2);
 const BILDER = path.join(ZIEL, 'handbuch');
+const MAILS = path.join(ARBEIT, 'mails.jsonl');
+const PW_ADMIN = 'EinSicheresPasswort-2026';
+
+function link(an, art) {
+  const mails = fs.readFileSync(MAILS, 'utf8').split('\n').filter(Boolean).map(JSON.parse).reverse();
+  for (const m of mails) { const t = m.an === an && m.text.match(new RegExp('#/' + art + '/([A-Za-z0-9_-]+)')); if (t) return t[1]; }
+  throw new Error('Kein Link ' + art + ' für ' + an);
+}
 
 (async () => {
   fs.mkdirSync(BILDER, { recursive: true });
@@ -20,45 +29,83 @@ const BILDER = path.join(ZIEL, 'handbuch');
     await (ziel || p).screenshot({ path: path.join(BILDER, name), type: 'jpeg', quality: 82 });
     console.log('Bild', name);
   }
+  async function einladen(p, email, vorname, nachname, org, rolle) {
+    await p.goto(URL + '#/benutzer/einladen'); await p.waitForSelector('#ein-form');
+    await p.fill('#ein-email', email); await p.fill('#ein-vorname', vorname); await p.fill('#ein-nachname', nachname);
+    await p.type('#ein-org', org);
+    if (rolle) await p.selectOption('#ein-rolle', rolle);
+  }
 
+  // Einrichtung und E-Mail-Versand (Testmodus: Datei)
   const p = await neueSeite();
-  await p.goto(URL);
-  await p.waitForSelector('#anmelde-form');
-  await foto(p, 'anmeldung.jpg');
-  await p.fill('#anm-passwort', 'RuVTest1234');
-  await p.click('#anm-knopf');
-  await p.waitForSelector('.kachel');
+  await p.goto(URL); await p.waitForSelector('#er-form');
+  await p.fill('#er-code', 'code-123-test');
+  await p.fill('#er-vorname', 'Michael'); await p.fill('#er-nachname', 'Herget'); await p.type('#er-org', 'VHVP');
+  await p.fill('#er-pw', PW_ADMIN); await p.fill('#er-pw2', PW_ADMIN);
+  await p.click('#er-knopf'); await p.waitForSelector('#m-form');
+  await p.fill('#m-host', 'datei'); await p.fill('#m-absender', 'info@ruv-lernwelt.de'); await p.fill('#m-absendername', 'R+V Lernwelt');
+  await p.click('#m-form button[type=submit]'); await p.waitForSelector('.chip >> text=Eingerichtet');
+
+  // Ein paar Konten, damit die Benutzerverwaltung nach etwas aussieht
+  await einladen(p, 'mia.gestalter@ruv.de', 'Mia', 'Gestalter', 'VHVPTV', 'mediengestalter');
+  await foto(p, 'einladen.jpg');
+  await p.click('#ein-knopf'); await p.waitForSelector('.tabelle >> text=mia.gestalter@ruv.de');
+  await einladen(p, 'david.design@ruv.de', 'David', 'Design', 'VHVPTVPR', 'designer');
+  await p.click('#ein-knopf'); await p.waitForSelector('.tabelle >> text=david.design@ruv.de');
+  await einladen(p, 'nora.nutzer@ruv.de', 'Nora', 'Nutzer', 'VH', 'nutzer');
+  await p.click('#ein-knopf'); await p.waitForSelector('.tabelle >> text=nora.nutzer@ruv.de');
+
+  // Einladung annehmen (Mediengestalterin) und Designer
+  const mg = await neueSeite();
+  await mg.goto(URL + '#/einladung/' + link('mia.gestalter@ruv.de', 'einladung')); await mg.waitForSelector('#ea-form');
+  await mg.fill('#ea-pw', 'Mediengestalterin-2026'); await mg.fill('#ea-pw2', 'Mediengestalterin-2026');
+  await foto(mg, 'einladung.jpg');
+  await mg.click('#ea-knopf'); await mg.waitForSelector('.kachel');
+  const de = await neueSeite();
+  await de.goto(URL + '#/einladung/' + link('david.design@ruv.de', 'einladung')); await de.waitForSelector('#ea-form');
+  await de.fill('#ea-pw', 'Designer-Passwort-26'); await de.fill('#ea-pw2', 'Designer-Passwort-26');
+  await de.click('#ea-knopf'); await de.waitForSelector('.kachel');
+
+  // Mediengestalterin ändert eine Persona → Versionen und „zuletzt geändert von“
+  await mg.goto(URL + '#/personas/1/bearbeiten'); await mg.waitForSelector('#persona-form');
+  await mg.fill('#pf-beruf', 'Rentner (Braumeister)');
+  await mg.click('#persona-form button[type=submit]'); await mg.waitForSelector('.geaendert');
+
+  // Anmeldung (frischer Browser)
+  const gast = await neueSeite();
+  await gast.goto(URL); await gast.waitForSelector('#anmelde-form');
+  await gast.fill('#anm-email', 'michael.herget@ruv.de');
+  await foto(gast, 'anmeldung.jpg');
+
+  // Daten-Ansichten als Admin
+  await p.goto(URL + '#/personas'); await p.waitForSelector('.kachel');
   await foto(p, 'liste.jpg');
-
-  await p.goto(URL + '#/personas/1');
-  await p.waitForSelector('.portrait img');
+  await p.goto(URL + '#/personas/1'); await p.waitForSelector('.portrait img');
   await foto(p, 'detail.jpg');
+  await p.goto(URL + '#/personas/1/versionen'); await p.waitForSelector('.version-eintrag');
+  await p.click('.version-eintrag >> nth=1'); await p.waitForSelector('.zeile-anders');
+  await foto(p, 'versionen.jpg');
 
-  await p.goto(URL + '#/personas/1/bearbeiten');
-  await p.waitForSelector('#persona-form');
+  await p.goto(URL + '#/personas/1/bearbeiten'); await p.waitForSelector('#persona-form');
   await foto(p, 'formular.jpg');
-  await p.setInputFiles('#pf-bilddatei', path.join(KOPIE, 'App_Data', 'bilder', '1022.jpg'));
+  await p.setInputFiles('#pf-bilddatei', path.join(ARBEIT, 'webapp', 'einrichtung', 'startdaten', 'bilder', '1022.jpg'));
   await p.waitForSelector('.zuschnitt canvas');
   await p.fill('#zs-zoom', '1.3');
   await foto(p, 'zuschnitt.jpg');
   await p.click('[data-zs="abbrechen"]');
 
-  await p.goto(URL + '#/personas/1');
-  await p.waitForSelector('#bez-hinzu');
+  await p.goto(URL + '#/personas/1'); await p.waitForSelector('#bez-hinzu');
   await p.click('#bez-hinzu');
   await p.selectOption('#bez-person', { label: 'Heidrun Düring' });
-  await p.fill('#bez-verh', 'Ehefrau');
-  await p.fill('#bez-gegen', 'Ehemann');
+  await p.fill('#bez-verh', 'Ehefrau'); await p.fill('#bez-gegen', 'Ehemann');
   const familie = p.locator('section.karte', { has: p.locator('#bez-neu') });
   await familie.scrollIntoViewIfNeeded();
   await foto(p, 'familie.jpg', familie);
 
-  await p.goto(URL + '#/firmen');
-  await p.waitForSelector('.kachel-breit');
+  await p.goto(URL + '#/firmen'); await p.waitForSelector('.kachel-breit');
   await foto(p, 'firmen.jpg');
 
-  await p.goto(URL + '#/formate/neu');
-  await p.waitForSelector('#format-form');
+  await p.goto(URL + '#/formate/neu'); await p.waitForSelector('#format-form');
   await p.fill('#fo-name', 'Hausrat kompakt');
   await p.selectOption('#fo-typ-feld', 'Video');
   await p.fill('#fo-nummer', '7');
@@ -68,19 +115,26 @@ const BILDER = path.join(ZIEL, 'handbuch');
   await p.evaluate(() => window.scrollTo(0, 260));
   await foto(p, 'format.jpg');
 
-  await p.goto(URL + '#/einstellungen');
-  await p.waitForSelector('#e-form');
+  // Verwaltung
+  await p.goto(URL + '#/benutzer'); await p.waitForSelector('.tabelle >> text=nora.nutzer@ruv.de');
+  await foto(p, 'benutzer.jpg');
+  await p.goto(URL + '#/protokoll'); await p.waitForSelector('.tabelle');
+  await foto(p, 'protokoll.jpg');
+  await p.goto(URL + '#/einstellungen'); await p.waitForSelector('#m-form');
   await foto(p, 'einstellungen.jpg');
 
-  const cookies = await p.context().cookies();
+  // Mein Konto aus Sicht des Designers
+  await de.goto(URL + '#/konto'); await de.waitForSelector('#k-form');
+  await foto(de, 'konto.jpg');
+
+  // Mobil
   const m = await neueSeite({ viewport: { width: 390, height: 780 }, deviceScaleFactor: 2 });
-  await m.context().addCookies(cookies);
-  await m.goto(URL);
-  await m.waitForSelector('.kachel');
+  await m.context().addCookies(await p.context().cookies());
+  await m.goto(URL + '#/personas'); await m.waitForSelector('.kachel');
   await foto(m, 'mobil.jpg');
 
   // PDF aus der Handbuch-Seite (Bilder des aktuellen Laufs)
-  fs.cpSync(BILDER, path.join(KOPIE, 'handbuch'), { recursive: true });
+  fs.cpSync(BILDER, path.join(ARBEIT, 'webapp', 'handbuch'), { recursive: true });
   const h = await neueSeite();
   await h.goto(URL + 'handbuch.html', { waitUntil: 'networkidle' });
   // Bilder sind auf der Seite "lazy"; für das PDF alle sofort laden

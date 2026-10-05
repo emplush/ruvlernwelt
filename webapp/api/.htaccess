@@ -1,0 +1,4 @@
+# Die Schnittstelle erlaubt nur index.php
+<FilesMatch "^(?!index\.php$).*$">
+  Require all denied
+</FilesMatch>
